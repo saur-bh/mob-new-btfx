@@ -1,0 +1,25 @@
+# Complete Login and Navigation Test - Using Android Test Data
+# This test performs full login flow and then tests all navigation sections
+
+appId: com.bitfinex.mobileapp.dev
+name: "Login and Navigation Test"
+description: "Complete login flow with PIN creation and navigation testing"
+tags: ["smoke", "login", "navigation", "end-to-end"]
+---
+# Import Android test data and config
+- runScript: '../testdata/testdata-android.js'
+
+# Run app setup
+- runFlow: '../flows/shared/app_setup.yaml'
+
+# Perform login
+- runFlow: '../flows/shared/login_flow.yaml'
+
+# Create PIN
+- runFlow: '../flows/shared/pin_creation.yaml'
+
+# Complete login process
+- runFlow: '../flows/shared/login_completion.yaml'
+
+# Test all navigation sections
+- runFlow: '../flows/shared/navigation_test.yaml'

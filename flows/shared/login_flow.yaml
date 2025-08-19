@@ -1,0 +1,34 @@
+# Shared Login Flow
+# This flow handles the login process with API keys
+
+appId: com.bitfinex.mobileapp.dev
+name: "Login Flow"
+description: "Perform login with API key and secret"
+---
+# Navigate to sign in
+- tapOn: ${output.app.navigation.signIn}
+
+# Tap on email field (if needed)
+- tapOn:
+    id: ${output.locators.login.emailField}
+
+# Select API Key option
+- tapOn:
+    text: ${output.locators.login.apiKeyText}
+    index: 1
+
+# Tap on Key option
+- tapOn: ${output.locators.login.keyText}
+
+# Input API Key
+- tapOn:
+    id: ${output.locators.login.apiKeyField}
+- inputText: ${output.bitfinex.apiKey}
+
+# Input Secret Key
+- tapOn:
+    id: ${output.locators.login.secretKeyField}
+- inputText: ${output.bitfinex.secretKey}
+
+# Submit login
+- tapOn: ${output.app.navigation.login}

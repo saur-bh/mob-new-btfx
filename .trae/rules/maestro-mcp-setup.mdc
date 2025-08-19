@@ -1,0 +1,248 @@
+# Maestro MCP Integration Setup for Trae
+
+## Overview
+
+This guide sets up Model Context Protocol (MCP) integration between Maestro and Trae, enabling AI-assisted test development and debugging.
+
+## What is MCP?
+
+Model Context Protocol (MCP) is a standardized protocol that bridges AI models with various data sources and tools. It acts as a "USB-C for AI" - a universal connector enabling seamless communication between large language models (LLMs) and the resources they need.
+
+### Benefits for Maestro Testing
+
+1. **AI-Powered Test Generation**: Generate test flows using natural language
+2. **Intelligent Debugging**: AI assistance for troubleshooting test failures
+3. **Context-Aware Suggestions**: Get relevant suggestions based on your test structure
+4. **Automated Documentation**: Generate documentation from your test flows
+5. **Smart Element Selection**: AI assistance for choosing optimal selectors
+
+## Installation Steps
+
+### 1. Verify Maestro Installation
+
+```bash
+# Check if Maestro is installed
+maestro --version
+
+# If not installed, install Maestro
+curl -Ls "https://get.maestro.mobile.dev" | bash
+```
+
+### 2. MCP Configuration Files
+
+#### Project-Level Configuration (`.trae/mcp.json`)
+
+```json
+{
+  "mcpServers": {
+    "maestro": {
+      "command": "maestro",
+      "args": ["mcp"],
+      "env": {
+        "MAESTRO_WORKSPACE": "${workspaceFolder}",
+        "MAESTRO_CONFIG": "${workspaceFolder}/config.yaml",
+        "MAESTRO_DEVICE_TYPE": "Android",
+        "MAESTRO_APP_ID": "com.bitfinex.mobileapp.dev",
+        "MAESTRO_TIMEOUT": "30000",
+        "MAESTRO_VERBOSE": "true",
+        "MAESTRO_PLATFORM": "android",
+        "MAESTRO_TEST_DATA": "testdata/testdata-android.js"
+      }
+    }
+  },
+  "contextProviders": [
+    {
+      "type": "maestro",
+      "config": {
+        "flowsDir": "flows/shared",
+        "testdataDir": "testdata",
+        "testsDir": "tests",
+        "utilsDir": "utils",
+        "reportsDir": "reports"
+      }
+    }
+  ]
+}
+```
+
+#### Global Configuration (Optional)
+
+Create `~/.trae/mcp.json` for global Maestro MCP access:
+
+```json
+{
+  "mcpServers": {
+    "maestro": {
+      "command": "maestro",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+### 3. Environment Variables
+
+Add to your shell profile (`.zshrc`, `.bashrc`, etc.):
+
+```bash
+export MAESTRO_WORKSPACE="/path/to/your/project"
+export MAESTRO_CONFIG="/path/to/your/project/config.yaml"
+export MAESTRO_DEVICE_TYPE="Android"
+export MAESTRO_APP_ID="com.bitfinex.mobileapp.dev"
+export MAESTRO_TIMEOUT="30000"
+export MAESTRO_VERBOSE="true"
+export MAESTRO_PLATFORM="android"
+```
+
+### 4. Restart Trae
+
+After configuration, restart Trae to load the MCP integration.
+
+## Using Maestro MCP in Trae
+
+### AI-Assisted Test Creation
+
+1. **Natural Language Commands**:
+   - "Create a login test for Bitfinex"
+   - "Generate a flow to navigate to portfolio"
+   - "Add assertions for balance display"
+
+2. **Smart Element Selection**:
+   - AI suggests optimal selectors
+   - Recommends accessibility IDs
+   - Provides fallback strategies
+
+3. **Test Debugging**:
+   - Analyze failed test outputs
+   - Suggest fixes for common issues
+   - Recommend alternative approaches
+
+### Example Interactions
+
+```
+User: "Create a test that logs into Bitfinex and checks the portfolio balance"
+
+AI Response:
+```yaml
+appId: com.bitfinex.mobileapp.dev
+---
+- launchApp
+- tapOn: "Login"
+- inputText: "${email}"
+- tapOn: "Continue"
+- inputText: "${password}"
+- tapOn: "Sign In"
+- assertVisible: "Portfolio"
+- tapOn: "Portfolio"
+- assertVisible: "Balance"
+```
+
+### Context-Aware Suggestions
+
+The MCP integration provides:
+
+- **Flow Structure**: Suggests proper YAML structure
+- **Element Selectors**: Recommends robust selectors
+- **Test Data**: Suggests parameterization strategies
+- **Error Handling**: Adds appropriate assertions
+- **Platform Differences**: Handles iOS/Android variations
+
+## Troubleshooting
+
+### Common Issues
+
+1. **MCP Server Not Found**:
+   - Verify Maestro installation
+   - Check PATH configuration
+   - Ensure `maestro mcp` command works
+
+2. **Configuration Errors**:
+   - Validate JSON syntax in `.trae/mcp.json`
+   - Check environment variables
+   - Restart Trae after configuration changes
+
+3. **Connection Issues**:
+   - Check network connectivity
+   - Verify Maestro service status
+   - Review Trae output panel for errors
+
+### Debug Commands
+
+```bash
+# Test Maestro MCP directly
+maestro mcp --help
+
+# Validate configuration
+cat .trae/mcp.json | jq .
+
+# Check environment
+env | grep MAESTRO
+```
+
+### Logs and Diagnostics
+
+1. Open Trae output panel
+2. Select "MCP" from the dropdown
+3. Look for connection and error messages
+4. Check Maestro logs in `reports/` directory
+
+## Advanced Configuration
+
+### Custom Commands
+
+Extend MCP with custom Maestro commands:
+
+```json
+{
+  "mcpServers": {
+    "maestro": {
+      "command": "maestro",
+      "args": ["mcp", "--custom-commands", "./custom-commands.json"]
+    }
+  }
+}
+```
+
+### Multiple Environments
+
+Configure different environments:
+
+```json
+{
+  "mcpServers": {
+    "maestro-dev": {
+      "command": "maestro",
+      "args": ["mcp"],
+      "env": {
+        "MAESTRO_APP_ID": "com.bitfinex.mobileapp.dev"
+      }
+    },
+    "maestro-prod": {
+      "command": "maestro",
+      "args": ["mcp"],
+      "env": {
+        "MAESTRO_APP_ID": "com.bitfinex.mobileapp"
+      }
+    }
+  }
+}
+```
+
+## Best Practices
+
+1. **Version Control**: Include `.trae/mcp.json` in your repository
+2. **Environment Separation**: Use different configs for dev/staging/prod
+3. **Security**: Avoid hardcoding sensitive data in configuration
+4. **Documentation**: Keep MCP setup documented for team members
+5. **Testing**: Regularly test MCP integration functionality
+
+## Resources
+
+- **Maestro Documentation**: https://maestro.mobile.dev/
+- **MCP Specification**: https://modelcontextprotocol.io/
+- **Trae IDE Documentation**: https://trae.ai/docs
+- **Bitfinex API**: https://docs.bitfinex.com/
+
+---
+
+*This setup enables powerful AI-assisted mobile testing with Maestro and Trae IDE.*

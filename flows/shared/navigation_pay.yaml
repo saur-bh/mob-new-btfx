@@ -1,0 +1,9 @@
+# Pay Navigation Flow
+# Navigate to Pay section and verify Fast Pay
+
+appId: com.bitfinex.mobileapp.dev
+name: "Navigate to Pay"
+description: "Navigate to Pay section and verify Fast Pay is visible"
+---
+- tapOn: "Pay"
+- assertVisible: "Fast Pay"

@@ -1,0 +1,94 @@
+# Reports and Test Output
+reports/
+logs/
+*.xml
+*.html
+*.json
+
+# Screenshots and Recordings
+screenshots/
+recordings/
+*.png
+*.jpg
+*.jpeg
+*.mp4
+*.mov
+
+# Apps (uncomment if you don't want to commit app files)
+# apps/*.apk
+# apps/*.app
+# apps/*.ipa
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary Files
+*.tmp
+*.temp
+*.log
+*.bak
+
+# Node.js (if using any Node.js tools)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python (if using any Python scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Java (if using any Java tools)
+*.class
+*.jar
+*.war
+*.ear
+
+# Android
+*.apk
+*.aab
+build/
+.gradle/
+
+# iOS
+*.ipa
+*.app
+build/
+DerivedData/
+
+# Maestro specific
+.maestro/
+maestro.log
+maestro-debug.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Backup files
+*.backup
+*.old
+*.orig
+

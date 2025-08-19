@@ -1,0 +1,21 @@
+# Navigation Test Flow
+# Test all navigation sections in the app
+
+appId: com.bitfinex.mobileapp.dev
+name: "Navigation Test"
+description: "Test all navigation sections: Account, Wallets, Pay, Earn, and Home"
+---
+# Test Account navigation
+- runFlow: navigation_account.yaml
+
+# Test Wallets navigation
+- runFlow: navigation_wallets.yaml
+
+# Test Pay navigation
+- runFlow: navigation_pay.yaml
+
+# Test Earn navigation
+- runFlow: navigation_earn.yaml
+
+# Test Home navigation (return to portfolio)
+- runFlow: navigation_home.yaml

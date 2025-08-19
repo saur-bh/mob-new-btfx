@@ -1,0 +1,16 @@
+appId: com.bitfinex.mobileapp.dev
+---
+# Launch app with clean state
+- launchApp
+- runFlow:
+    when:
+      visible: "Enter your 4-digit PIN"
+    file: ../flows/shared/pin_enter.yaml
+# Login flow first
+- runFlow:
+    when:
+      visible: "(Sign in|Tailored to you)"
+    file: "login_test.yaml"
+
+# Test all navigation sections
+- runFlow: '../flows/shared/navigation_test.yaml'

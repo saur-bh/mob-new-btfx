@@ -1,0 +1,19 @@
+# Shared PIN Creation Flow
+# This flow handles PIN creation by pressing the same number repeatedly
+
+appId: com.bitfinex.mobileapp.dev
+name: "PIN Creation"
+description: "Create PIN by pressing the same number repeatedly"
+---
+# Import Android test data and config
+- runScript: '../../testdata/testdata-android.js'
+- repeat:
+    while:
+      visible: "Enter your 4-digit PIN"
+    commands:
+      - tapOn: ${output.app.pin.defaultPin}
+
+
+      
+
+

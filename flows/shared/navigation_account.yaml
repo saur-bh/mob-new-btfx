@@ -1,0 +1,9 @@
+# Account Navigation Flow
+# Navigate to Account section and verify logout option
+
+appId: com.bitfinex.mobileapp.dev
+name: "Navigate to Account"
+description: "Navigate to Account section and verify logout is visible"
+---
+- tapOn: "Account"
+- assertVisible: "Logout"

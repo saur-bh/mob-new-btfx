@@ -1,0 +1,16 @@
+# Login Completion Flow
+# This flow handles the final steps after PIN creation
+
+appId: com.bitfinex.mobileapp.dev
+name: "Login Completion"
+description: "Complete login process by handling special fee screen and verifying portfolio"
+---
+# Handle special fee discount screen if it appears
+- runFlow:
+    when:
+      visible: "Special fee discounts.*"
+    commands:
+      - tapOn:   # Close button
+
+# Assert that we're on the main portfolio screen
+- assertVisible: "My Portfolio"

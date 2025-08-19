@@ -1,0 +1,9 @@
+# Earn Navigation Flow
+# Navigate to Earn section and verify rewards calculator
+
+appId: com.bitfinex.mobileapp.dev
+name: "Navigate to Earn"
+description: "Navigate to Earn section and verify rewards calculator is visible"
+---
+- tapOn: "Earn"
+- assertVisible: "Calculate your potential rewards"

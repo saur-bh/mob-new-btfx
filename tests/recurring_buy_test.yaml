@@ -1,0 +1,61 @@
+appId: com.bitfinex.mobileapp.dev
+---
+# Launch app with clean state
+- launchApp
+- runFlow:
+    when:
+      visible: "Enter your 4-digit PIN"
+    file: ../flows/shared/pin_enter.yaml
+# Login flow first
+- runFlow:
+    when:
+      visible: "(Sign in|Tailored to you)"
+    file: "login_test.yaml"
+# Navigate to Home and access 9-dot menu
+- tapOn: Home
+- tapOn:
+    point: 6%,9%
+
+# Start Recurring Buy flow
+- tapOn: Recurring Buy
+- tapOn: Get started
+- tapOn: Bitcoin
+
+# Set amount
+- tapOn: "0"
+- inputText: "124"
+
+
+# Set frequency
+- tapOn: Select frequency
+- assertVisible: Order frequency
+- tapOn: Daily
+- assertVisible: Daily
+- assertVisible: Spend a fixed amount each time
+
+# Create the recurring buy
+- tapOn: Create
+- assertVisible: Please confirm the details of your Recurring Buy.
+- assertVisible: daily
+- assertVisible: Amount to spend
+- assertVisible: 124 USD
+- tapOn: Confirm
+
+# Verify creation
+- assertVisible: ORDER CREATED
+- assertVisible: Your Recurring Buy of BTC for 124 USD has been created.
+- tapOn: Done
+
+# Check recurring buy details
+- assertVisible: "BTC/USD, Daily.*"
+- tapOn: "BTC/USD, Daily, Avg.*"
+- assertVisible: Details
+- assertVisible: No transactions recorded
+- assertVisible: Cancel buy
+
+# Cancel the recurring buy
+- tapOn: Cancel buy
+- assertVisible: Please Confirm
+- tapOn:
+    point: 73%,95%
+- assertVisible: Get started

@@ -1,0 +1,161 @@
+---
+alwaysApply: true
+---
+Here is your fully regenerated and cleaned-up MDC file for Trae for your Bitfinex automation framework:
+
+⸻
+
+
+---
+description: MDC for Bitfinex Mobile Automation using Maestro (iOS + Android + Trae)
+---
+
+# 🎯 Overview
+
+This MDC defines the setup, structure, and runtime context for **Bitfinex iOS and Android UI automation** using **Maestro CLI** with **Trae MCP integration**.
+
+---
+
+## 🚀 Installation and Setup
+
+### Install Maestro on macOS
+
+```bash
+curl -Ls "https://get.maestro.mobile.dev" | bash
+maestro login
+
+# Get Booted Device
+xcrun simctl list devices booted
+
+# Java Setup Fix (if needed)
+echo 'export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-11.jdk/Contents/Home' >> ~/.zshrc
+echo 'export PATH=$JAVA_HOME/bin:$PATH' >> ~/.zshrc
+source ~/.zshrc
+```
+
+⸻
+
+## 🗂 Folder Structure
+
+```
+BITFINEX/
+├── driver/                  # Entry point tests
+│   └── smoke-login.yaml
+├── elements/                # JS Page Object files
+│   ├── login.js
+│   ├── fastPay.js
+│   └── ...
+├── subflows/                # Shared reusable flows
+│   ├── passcodePage.yaml
+│   ├── loginFlow.yaml
+│   └── ...
+├── testdata/                # Test data files
+│   ├── testdata-android.js
+│   ├── testdata-ios.js
+│   └── ...
+├── utils/                   # Utility scripts
+│   ├── setup.sh
+│   ├── check_mcp.sh
+│   └── ...
+├── reports/                 # Test reports and logs
+│   ├── screenshots/
+│   ├── recordings/
+│   └── *.log
+├── apps/                    # Application files
+│   ├── bitfinex-android.apk
+│   └── bitfinex-ios.app
+└── .trae/                   # Trae IDE integration
+    ├── mcp.json
+    └── rules/
+        └── documentation-framework.mdc
+```
+
+---
+
+## 🧠 Trae MCP Integration
+
+### Configuration Files
+
+#### `.trae/mcp.json`
+```json
+{
+  "mcpServers": {
+    "maestro": {
+      "command": "maestro",
+      "args": ["mcp"],
+      "env": {
+        "MAESTRO_WORKSPACE": "${workspaceFolder}",
+        "MAESTRO_CONFIG": "${workspaceFolder}/config.yaml"
+      }
+    }
+  }
+}
+```
+
+### AI-Assisted Features
+
+1. **Test Generation**: Generate Maestro flows using natural language
+2. **Debugging Support**: AI assistance for troubleshooting failures
+3. **Element Selection**: Smart selector recommendations
+4. **Documentation**: Auto-generate test documentation
+5. **Code Completion**: Context-aware suggestions
+
+---
+
+## 📱 Platform Support
+
+### Android Configuration
+- **Device**: Android Emulator or Physical Device
+- **App ID**: `com.bitfinex.mobileapp.dev`
+- **Platform**: `android`
+
+### iOS Configuration
+- **Device**: iOS Simulator or Physical Device
+- **App ID**: `com.bitfinex.mobileapp`
+- **Platform**: `ios`
+
+---
+
+## 🔧 Usage Examples
+
+### Basic Test Flow
+```yaml
+appId: com.bitfinex.mobileapp.dev
+---
+- launchApp
+- tapOn: "Login"
+- inputText: "user@example.com"
+- tapOn: "Continue"
+```
+
+### Using Subflows
+```yaml
+appId: com.bitfinex.mobileapp.dev
+---
+- runFlow: subflows/loginFlow.yaml
+- tapOn: "Portfolio"
+- assertVisible: "Balance"
+```
+
+---
+
+## 📚 Resources
+
+- **Maestro Documentation**: https://maestro.mobile.dev/
+- **Trae IDE**: https://trae.ai/
+- **MCP Protocol**: https://modelcontextprotocol.io/
+- **Bitfinex API**: https://docs.bitfinex.com/
+
+---
+
+## 🎯 Best Practices
+
+1. **Use Page Objects**: Organize elements in separate JS files
+2. **Modular Flows**: Break complex tests into reusable subflows
+3. **Data-Driven**: Use external test data files
+4. **Error Handling**: Include proper assertions and error recovery
+5. **Documentation**: Keep flows well-documented and maintainable
+
+---
+
+*This framework is optimized for Trae IDE with MCP integration for enhanced AI-assisted testing capabilities.*

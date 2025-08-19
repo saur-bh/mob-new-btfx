@@ -1,0 +1,9 @@
+# Wallets Navigation Flow
+# Navigate to Wallets section and verify balances
+
+appId: com.bitfinex.mobileapp.dev
+name: "Navigate to Wallets"
+description: "Navigate to Wallets section and verify balances are visible"
+---
+- tapOn: "Wallets"
+- assertVisible: "BALANCES"

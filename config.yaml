@@ -1,0 +1,47 @@
+name: bitfinex-framework
+description: "Bitfinex Mobile Automation Framework with MCP Integration"
+
+# Framework configuration
+framework:
+  defaultPlatform: "android"
+  defaultMode: "lite"
+  defaultPinIterations: 9
+  defaultTestFile: "tests/login_and_navigation_test.yaml"
+
+# App configurations
+apps:
+  android:
+    appId: "com.bitfinex.mobileapp.dev"
+    name: "Bitfinex Android"
+    packageName: "com.bitfinex.mobileapp.dev"
+    apkPath: "apps/bitfinex-android.apk"
+  ios:
+    appId: "com.bitfinex.mobileapp.dev"
+    name: "Bitfinex iOS"
+    bundleId: "com.bitfinex.mobileapp.dev"
+    appPath: "apps/bitfinex-ios.app"
+
+# Test data configuration
+testdata:
+  android: "testdata/testdata-android.js"
+  ios: "testdata/testdata-ios.js"
+
+# Flow directories
+flows:
+  shared: "flows/shared"
+  tests: "tests"
+  utils: "utils"
+
+# Reports configuration
+reports:
+  output: "reports"
+  screenshots: "reports/screenshots"
+  recordings: "reports/recordings"
+  debug: "debug"
+
+# MCP configuration
+mcp:
+  enabled: true
+  server: "maestro"
+  timeout: 30000
+  verbose: true
