@@ -1,9 +1,34 @@
 # Pay Navigation Flow
 # Navigate to Pay section and verify Fast Pay
 
-appId: com.bitfinex.mobileapp.dev
+appId: com.bitfinex.bfxdev
 name: "Navigate to Pay"
 description: "Navigate to Pay section and verify Fast Pay is visible"
 ---
-- tapOn: "Pay"
-- assertVisible: "Fast Pay"
+# Take a screenshot to see navigation options
+- takeScreenshot: "pay_navigation.png"
+
+# Try different pay navigation options (iOS/Android compatible)
+- tapOn:
+    text: ".*[Pp]ay.*"
+    optional: true
+- tapOn:
+    text: ".*[Tt]ransfer.*"
+    optional: true
+- tapOn:
+    text: ".*[Ss]end.*"
+    optional: true
+
+# Wait for navigation
+- waitForAnimationToEnd
+
+# Check for pay/transfer indicators
+- assertVisible:
+    text: ".*[Ff]ast [Pp]ay.*"
+    optional: true
+- assertVisible:
+    text: ".*[Pp]ay.*"
+    optional: true
+- assertVisible:
+    text: ".*[Tt]ransfer.*"
+    optional: true

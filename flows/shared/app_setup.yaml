@@ -1,7 +1,7 @@
 # Shared App Setup Flow
 # This flow handles app launch and mode selection
 
-appId: com.bitfinex.mobileapp.dev
+appId: com.bitfinex.bfxdev
 name: "App Setup"
 description: "Launch app and select mode (Lite/Full)"
 ---
@@ -9,15 +9,15 @@ description: "Launch app and select mode (Lite/Full)"
 - launchApp:
     clearState: true
     clearKeychain: true
-# Import Android test data and config
-- runScript: '../../testdata/testdata-android.js'
+# Import iOS test data and config
+- runScript: '../../testdata/testdata-ios.js'
 # Wait for app to load
 - extendedWaitUntil:
     visible: "Tailored to you"
     timeout: 10000
 
 # Select app mode (Lite or Full)
-- tapOn: ${output.app.modes.lite}  # Default to Lite mode
+- tapOn: "Lite.*"  # Def- tapOn: "Lite ault to Lite mode
 
 # Continue to next screen
-- tapOn: ${output.app.navigation.continue}
+- tapOn: "Continue"

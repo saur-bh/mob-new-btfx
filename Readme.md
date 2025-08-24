@@ -22,27 +22,37 @@ bitfixnex/
 │   ├── app_setup.yaml           # App launch & mode selection
 │   ├── login_flow.yaml          # API key authentication
 │   ├── pin_creation.yaml        # Ultra-simple PIN setup
+│   ├── pin_enter.yaml           # PIN entry flow
 │   ├── login_completion.yaml    # Post-login steps
-│   ├── navigation_*.yaml        # Navigation test flows
-│   └── navigation_test.yaml     # Complete navigation test
+│   ├── navigation_account.yaml  # Account navigation
+│   ├── navigation_earn.yaml     # Earn section navigation
+│   ├── navigation_home.yaml     # Home navigation
+│   ├── navigation_pay.yaml      # Pay section navigation
+│   ├── navigation_test.yaml     # Complete navigation test
+│   └── navigation_wallets.yaml  # Wallets navigation
 ├── 📁 testdata/                  # Platform-specific configurations
-│   ├── testdata-android.js      # Android locators & settings
-│   └── testdata-ios.js          # iOS locators & settings
-├── 📁 tests/                     # Main test scenarios
-│   └── login_and_navigation_test.yaml  # Complete E2E test
-├── 📁 utils/                     # Framework utilities
-│   ├── run_test.sh              # Main test runner
-│   ├── run_mcp_test.sh          # MCP-enabled test runner
-│   └── check_mcp.sh             # MCP status checker
+│   ├── testdata-staging.js      # Staging environment data
+│   └── testdata-prod.js         # Production environment data
+├── 📁 tests/                     # Main test suites
+│   ├── login_test.yaml          # Complete login test
+│   └── navigation_test.yaml     # Navigation validation
+├── 📁 utils/                     # Helper scripts
+│   ├── check_mcp.sh             # MCP status checker
+│   ├── run_mcp_test.sh          # MCP-enhanced testing
+│   └── run_test.sh              # Test runner
 ├── 📁 apps/                      # App files (add your APK/APP here)
-├── 📁 reports/                   # Test outputs
+├── 📁 reports/                   # Test outputs (auto-generated)
+│   ├── android/                 # Android test reports
+│   ├── ios/                     # iOS test reports
 │   ├── screenshots/             # Failure screenshots
 │   └── recordings/              # Test recordings
 ├── 📁 .trae/                     # Trae IDE integration
-├── setup.sh                      # Prerequisites checker
-├── setup-mcp.sh                  # MCP integration setup
+│   └── rules/                   # MDC rule files
+│       ├── documentation-framework.mdc
+│       └── maestro-mcp-setup.mdc
 ├── config.yaml                   # Framework configuration
-└── Readme.md                     # This file
+├── setup.sh                      # Main setup script
+└── .gitignore                    # Version control exclusions
 ```
 
 ## 🚀 **Quick Start Guide**
@@ -212,7 +222,7 @@ apps:
 ### **Setup MCP Integration**
 ```bash
 # Setup AI-assisted testing in Trae
-./setup-mcp.sh
+./setup.sh
 ```
 
 ### **MCP Commands**
@@ -350,7 +360,7 @@ Your Bitfinex automation framework is ready!
 ```bash
 ./setup.sh                    # Check prerequisites
 ./utils/run_test.sh           # Run your first test
-./setup-mcp.sh               # Setup AI assistance
+./utils/check_mcp.sh         # Check AI assistance status
 ```
 
 **Need Help?**

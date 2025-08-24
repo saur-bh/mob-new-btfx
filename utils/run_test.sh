@@ -381,7 +381,7 @@ update_test_file_for_platform() {
         sed -i '' 's|testdata-ios.js|testdata-android.js|g' "$temp_file"
         log_message "Updated test file to use Android test data"
     else
-        sed -i '' 's|testdata-android.js|testdata-ios.js|g' "$temp_file"
+        sed -i '' 's|testdata-android.js||g' "$temp_file"
         log_message "Updated test file to use iOS test data"
     fi
     

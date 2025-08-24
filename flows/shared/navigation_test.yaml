@@ -1,7 +1,7 @@
 # Navigation Test Flow
 # Test all navigation sections in the app
 
-appId: com.bitfinex.mobileapp.dev
+appId: com.bitfinex.bfxdev
 name: "Navigation Test"
 description: "Test all navigation sections: Account, Wallets, Pay, Earn, and Home"
 ---

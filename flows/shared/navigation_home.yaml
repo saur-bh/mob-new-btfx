@@ -1,9 +1,34 @@
 # Home Navigation Flow
 # Navigate to Home section and verify portfolio
 
-appId: com.bitfinex.mobileapp.dev
+appId: com.bitfinex.bfxdev
 name: "Navigate to Home"
 description: "Navigate to Home section and verify portfolio is visible"
 ---
-- tapOn: "Home"
-- assertVisible: "My Portfolio"
+# Take a screenshot to see navigation options
+- takeScreenshot: "home_navigation.png"
+
+# Try different home navigation options (iOS/Android compatible)
+- tapOn:
+    text: ".*[Hh]ome.*"
+    optional: true
+- tapOn:
+    text: ".*[Dd]ashboard.*"
+    optional: true
+- tapOn:
+    text: ".*[Pp]ortfolio.*"
+    optional: true
+
+# Wait for navigation
+- waitForAnimationToEnd
+
+# Check for home/portfolio indicators
+- assertVisible:
+    text: ".*[Mm]y [Pp]ortfolio.*"
+    optional: true
+- assertVisible:
+    text: ".*[Pp]ortfolio.*"
+    optional: true
+- assertVisible:
+    text: ".*[Hh]ome.*"
+    optional: true

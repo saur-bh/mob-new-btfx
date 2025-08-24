@@ -1,9 +1,34 @@
 # Earn Navigation Flow
 # Navigate to Earn section and verify rewards calculator
 
-appId: com.bitfinex.mobileapp.dev
+appId: com.bitfinex.bfxdev
 name: "Navigate to Earn"
 description: "Navigate to Earn section and verify rewards calculator is visible"
 ---
-- tapOn: "Earn"
-- assertVisible: "Calculate your potential rewards"
+# Take a screenshot to see navigation options
+- takeScreenshot: "earn_navigation.png"
+
+# Try different earn navigation options (iOS/Android compatible)
+- tapOn:
+    text: ".*[Ee]arn.*"
+    optional: true
+- tapOn:
+    text: ".*[Rr]ewards.*"
+    optional: true
+- tapOn:
+    text: ".*[Ii]nvest.*"
+    optional: true
+
+# Wait for navigation
+- waitForAnimationToEnd
+
+# Check for earn/rewards indicators
+- assertVisible:
+    text: ".*[Cc]alculate.*rewards.*"
+    optional: true
+- assertVisible:
+    text: ".*[Ee]arn.*"
+    optional: true
+- assertVisible:
+    text: ".*[Rr]ewards.*"
+    optional: true

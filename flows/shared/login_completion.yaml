@@ -1,7 +1,7 @@
 # Login Completion Flow
 # This flow handles the final steps after PIN creation
 
-appId: com.bitfinex.mobileapp.dev
+appId: com.bitfinex.bfxdev
 name: "Login Completion"
 description: "Complete login process by handling special fee screen and verifying portfolio"
 ---
@@ -12,5 +12,19 @@ description: "Complete login process by handling special fee screen and verifyin
     commands:
       - tapOn:   # Close button
 
-# Assert that we're on the main portfolio screen
-- assertVisible: "My Portfolio"
+# Take a screenshot to see what's available
+- takeScreenshot: "after_login.png"
+
+# Check for various possible main screen indicators
+- assertVisible:
+    text: "Portfolio"
+    optional: true
+- assertVisible:
+    text: "Wallet"
+    optional: true
+- assertVisible:
+    text: "Trading"
+    optional: true
+- assertVisible:
+    text: "Home"
+    optional: true

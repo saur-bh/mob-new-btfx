@@ -1,4 +1,4 @@
-appId: com.bitfinex.mobileapp.dev
+appId: com.bitfinex.bfxdev
 ---
 # Launch app with clean state
 - launchApp

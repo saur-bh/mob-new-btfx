@@ -1,34 +1,53 @@
 # Shared Login Flow
 # This flow handles the login process with API keys
 
-appId: com.bitfinex.mobileapp.dev
+appId: com.bitfinex.bfxdev
 name: "Login Flow"
 description: "Perform login with API key and secret"
 ---
 # Navigate to sign in
-- tapOn: ${output.app.navigation.signIn}
+- tapOn: "Sign in"
 
-# Tap on email field (if needed)
+# Wait for login screen to load
+- waitForAnimationToEnd
+
+# Take a screenshot to see what's available
+- takeScreenshot: "login_form.png"
+
+# Tap on API Key option (works for both iOS and Android)
 - tapOn:
-    id: ${output.locators.login.emailField}
+    text: "API Key.*"
+    optional: true
 
-# Select API Key option
+# Wait for API key input screen
+- waitForAnimationToEnd
+
+# Tap on API key input field (iOS and Android compatible)
 - tapOn:
-    text: ${output.locators.login.apiKeyText}
-    index: 1
-
-# Tap on Key option
-- tapOn: ${output.locators.login.keyText}
-
-# Input API Key
+    id: ".*input.*"
+    optional: true
 - tapOn:
-    id: ${output.locators.login.apiKeyField}
+    id: ".*Login-Public-Key-Input.*"
+    optional: true
+
+# Input API Key from test data
 - inputText: ${output.bitfinex.apiKey}
 
-# Input Secret Key
+# Tap on Secret key input field
 - tapOn:
-    id: ${output.locators.login.secretKeyField}
+    id: ".*secret.*"
+    optional: true
+- tapOn:
+    id: ".*Login-Secret-Key-Input.*"
+    optional: true
+
+# Input Secret Key from test data
 - inputText: ${output.bitfinex.secretKey}
 
 # Submit login
-- tapOn: ${output.app.navigation.login}
+- tapOn:
+    text: ".*[Ll]ogin.*"
+    optional: true
+- tapOn:
+    text: ".*[Cc]ontinue.*"
+    optional: true

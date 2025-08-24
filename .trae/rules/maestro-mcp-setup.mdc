@@ -46,7 +46,7 @@ curl -Ls "https://get.maestro.mobile.dev" | bash
         "MAESTRO_TIMEOUT": "30000",
         "MAESTRO_VERBOSE": "true",
         "MAESTRO_PLATFORM": "android",
-        "MAESTRO_TEST_DATA": "testdata/testdata-android.js"
+        "MAESTRO_TEST_DATA": "testdata/testdata-staging.js"
       }
     }
   },
@@ -92,6 +92,7 @@ export MAESTRO_APP_ID="com.bitfinex.mobileapp.dev"
 export MAESTRO_TIMEOUT="30000"
 export MAESTRO_VERBOSE="true"
 export MAESTRO_PLATFORM="android"
+export MAESTRO_TEST_DATA="testdata/testdata-staging.js"
 ```
 
 ### 4. Restart Trae
@@ -120,21 +121,18 @@ After configuration, restart Trae to load the MCP integration.
 ### Example Interactions
 
 ```
-User: "Create a test that logs into Bitfinex and checks the portfolio balance"
+User: "Create a test that logs into Bitfinex and navigates to wallets"
 
 AI Response:
 ```yaml
 appId: com.bitfinex.mobileapp.dev
 ---
-- launchApp
-- tapOn: "Login"
-- inputText: "${email}"
-- tapOn: "Continue"
-- inputText: "${password}"
-- tapOn: "Sign In"
-- assertVisible: "Portfolio"
-- tapOn: "Portfolio"
-- assertVisible: "Balance"
+- runFlow: flows/shared/app_setup.yaml
+- runFlow: flows/shared/login_flow.yaml
+- runFlow: flows/shared/pin_creation.yaml
+- runFlow: flows/shared/login_completion.yaml
+- runFlow: flows/shared/navigation_wallets.yaml
+- assertVisible: "Wallets"
 ```
 
 ### Context-Aware Suggestions
@@ -210,18 +208,20 @@ Configure different environments:
 ```json
 {
   "mcpServers": {
-    "maestro-dev": {
+    "maestro-staging": {
       "command": "maestro",
       "args": ["mcp"],
       "env": {
-        "MAESTRO_APP_ID": "com.bitfinex.mobileapp.dev"
+        "MAESTRO_APP_ID": "com.bitfinex.mobileapp.dev",
+        "MAESTRO_TEST_DATA": "testdata/testdata-staging.js"
       }
     },
     "maestro-prod": {
       "command": "maestro",
       "args": ["mcp"],
       "env": {
-        "MAESTRO_APP_ID": "com.bitfinex.mobileapp"
+        "MAESTRO_APP_ID": "com.bitfinex.mobileapp",
+        "MAESTRO_TEST_DATA": "testdata/testdata-prod.js"
       }
     }
   }

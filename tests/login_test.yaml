@@ -1,7 +1,7 @@
 # Complete Login and Navigation Test - Using Android Test Data
 # This test performs full login flow and then tests all navigation sections
 
-appId: com.bitfinex.mobileapp.dev
+appId: com.bitfinex.bfxdev
 name: "Login and Navigation Test"
 description: "Complete login flow with PIN creation and navigation testing"
 tags: ["smoke", "login", "navigation", "end-to-end"]

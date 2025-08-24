@@ -1,20 +1,20 @@
-// Android Test Data for Maestro Tests
-// This file exports Android-specific test data variables
+// iOS Test Data for Maestro Tests
+// This file exports iOS-specific test data variables
 
-// Android configuration
+// iOS configuration
 const config = {
-    appId: "com.bitfinex.mobileapp.dev",
-    timeout: 30000,
+    appId: "com.bitfinex.bfxdev",
+    timeout: 25000,
     maestro: {
-        driverTimeout: 30000,
-        elementTimeout: 10000,
-        animationTimeout: 1000
+        driverTimeout: 25000,
+        elementTimeout: 8000,
+        animationTimeout: 500
     },
     reporting: {
-        outputDir: "reports/android",
-        screenshotsDir: "reports/android/screenshots",
-        videosDir: "reports/android/videos",
-        xmlReport: "reports/android/test-results.xml"
+        outputDir: "reports/ios",
+        screenshotsDir: "reports/ios/screenshots",
+        videosDir: "reports/ios/videos",
+        xmlReport: "reports/ios/test-results.xml"
     }
 };
 
@@ -24,7 +24,7 @@ output.bitfinex = {
     secretKey: "06ecd3c6b560b32003451f244cb302c258eb5ebcd82"
 };
 
-// Android app configuration
+// iOS app configuration
 output.app = {
     appId: config.appId,
     
@@ -53,7 +53,7 @@ output.app = {
     }
 };
 
-// Android test settings
+// iOS test settings
 output.testSettings = {
     timeout: config.timeout,
     maestro: config.maestro,

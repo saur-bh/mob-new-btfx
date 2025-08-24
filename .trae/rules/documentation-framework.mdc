@@ -38,36 +38,43 @@ source ~/.zshrc
 ## 🗂 Folder Structure
 
 ```
-BITFINEX/
-├── driver/                  # Entry point tests
-│   └── smoke-login.yaml
-├── elements/                # JS Page Object files
-│   ├── login.js
-│   ├── fastPay.js
-│   └── ...
-├── subflows/                # Shared reusable flows
-│   ├── passcodePage.yaml
-│   ├── loginFlow.yaml
-│   └── ...
+bitfixnex/
+├── flows/shared/            # Reusable test flows
+│   ├── app_setup.yaml
+│   ├── login_completion.yaml
+│   ├── login_flow.yaml
+│   ├── pin_creation.yaml
+│   ├── pin_enter.yaml
+│   ├── navigation_account.yaml
+│   ├── navigation_earn.yaml
+│   ├── navigation_home.yaml
+│   ├── navigation_pay.yaml
+│   ├── navigation_test.yaml
+│   └── navigation_wallets.yaml
 ├── testdata/                # Test data files
-│   ├── testdata-android.js
-│   ├── testdata-ios.js
-│   └── ...
+│   ├── testdata-staging.js
+│   └── testdata-prod.js
+├── tests/                   # Main test files
+│   ├── login_test.yaml
+│   └── navigation_test.yaml
 ├── utils/                   # Utility scripts
-│   ├── setup.sh
 │   ├── check_mcp.sh
-│   └── ...
-├── reports/                 # Test reports and logs
-│   ├── screenshots/
-│   ├── recordings/
-│   └── *.log
+│   ├── run_mcp_test.sh
+│   └── run_test.sh
 ├── apps/                    # Application files
-│   ├── bitfinex-android.apk
-│   └── bitfinex-ios.app
-└── .trae/                   # Trae IDE integration
-    ├── mcp.json
-    └── rules/
-        └── documentation-framework.mdc
+│   └── README.md
+├── reports/                 # Test reports and logs (auto-generated)
+│   ├── android/
+│   ├── ios/
+│   ├── screenshots/
+│   └── recordings/
+├── .trae/                   # Trae IDE integration
+│   └── rules/
+│       ├── documentation-framework.mdc
+│       └── maestro-mcp-setup.mdc
+├── config.yaml
+├── setup.sh
+└── .gitignore
 ```
 
 ---
@@ -88,7 +95,19 @@ BITFINEX/
         "MAESTRO_CONFIG": "${workspaceFolder}/config.yaml"
       }
     }
-  }
+  },
+  "contextProviders": [
+    {
+      "type": "maestro",
+      "config": {
+        "flowsDir": "flows/shared",
+        "testdataDir": "testdata",
+        "testsDir": "tests",
+        "utilsDir": "utils",
+        "reportsDir": "reports"
+      }
+    }
+  ]
 }
 ```
 
@@ -104,15 +123,17 @@ BITFINEX/
 
 ## 📱 Platform Support
 
-### Android Configuration
-- **Device**: Android Emulator or Physical Device
-- **App ID**: `com.bitfinex.mobileapp.dev`
-- **Platform**: `android`
+### Staging Environment
+- **Device**: Android Emulator or iOS Simulator
+- **App ID**: `com.bitfinex.mobileapp.dev` (Android) / `com.bitfinex.mobileapp` (iOS)
+- **Platform**: `android` or `ios`
+- **Test Data**: `testdata/testdata-staging.js`
 
-### iOS Configuration
-- **Device**: iOS Simulator or Physical Device
+### Production Environment
+- **Device**: Physical Device or Simulator
 - **App ID**: `com.bitfinex.mobileapp`
-- **Platform**: `ios`
+- **Platform**: `android` or `ios`
+- **Test Data**: `testdata/testdata-prod.js`
 
 ---
 
@@ -128,12 +149,12 @@ appId: com.bitfinex.mobileapp.dev
 - tapOn: "Continue"
 ```
 
-### Using Subflows
+### Using Shared Flows
 ```yaml
 appId: com.bitfinex.mobileapp.dev
 ---
-- runFlow: subflows/loginFlow.yaml
-- tapOn: "Portfolio"
+- runFlow: flows/shared/login_flow.yaml
+- runFlow: flows/shared/navigation_wallets.yaml
 - assertVisible: "Balance"
 ```
 
@@ -150,11 +171,12 @@ appId: com.bitfinex.mobileapp.dev
 
 ## 🎯 Best Practices
 
-1. **Use Page Objects**: Organize elements in separate JS files
-2. **Modular Flows**: Break complex tests into reusable subflows
-3. **Data-Driven**: Use external test data files
+1. **Modular Flows**: Break complex tests into reusable shared flows
+2. **Environment Separation**: Use separate test data for staging and production
+3. **Data-Driven**: Use external test data files (testdata-staging.js, testdata-prod.js)
 4. **Error Handling**: Include proper assertions and error recovery
 5. **Documentation**: Keep flows well-documented and maintainable
+6. **MCP Integration**: Leverage AI assistance for test generation and debugging
 
 ---
 

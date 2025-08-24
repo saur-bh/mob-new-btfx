@@ -3,7 +3,7 @@ description: "Bitfinex Mobile Automation Framework with MCP Integration"
 
 # Framework configuration
 framework:
-  defaultPlatform: "android"
+  defaultPlatform: "ios"
   defaultMode: "lite"
   defaultPinIterations: 9
   defaultTestFile: "tests/login_and_navigation_test.yaml"
@@ -11,15 +11,15 @@ framework:
 # App configurations
 apps:
   android:
-    appId: "com.bitfinex.mobileapp.dev"
+    appId: "com.bitfinex.bfxdev"
     name: "Bitfinex Android"
-    packageName: "com.bitfinex.mobileapp.dev"
+    packageName: "com.bitfinex.bfxdev"
     apkPath: "apps/bitfinex-android.apk"
   ios:
-    appId: "com.bitfinex.mobileapp.dev"
+    appId: "com.bitfinex.bfxdev"
     name: "Bitfinex iOS"
-    bundleId: "com.bitfinex.mobileapp.dev"
-    appPath: "apps/bitfinex-ios.app"
+    bundleId: "com.bitfinex.bfxdev"
+    appPath: "apps/BitfinexRedesign.app"
 
 # Test data configuration
 testdata:

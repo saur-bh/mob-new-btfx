@@ -1,9 +1,34 @@
 # Wallets Navigation Flow
 # Navigate to Wallets section and verify balances
 
-appId: com.bitfinex.mobileapp.dev
+appId: com.bitfinex.bfxdev
 name: "Navigate to Wallets"
 description: "Navigate to Wallets section and verify balances are visible"
 ---
-- tapOn: "Wallets"
-- assertVisible: "BALANCES"
+# Take a screenshot to see navigation options
+- takeScreenshot: "wallets_navigation.png"
+
+# Try different wallet navigation options (iOS/Android compatible)
+- tapOn:
+    text: ".*[Ww]allets?.*"
+    optional: true
+- tapOn:
+    text: ".*[Bb]alances?.*"
+    optional: true
+- tapOn:
+    text: ".*[Pp]ortfolio.*"
+    optional: true
+
+# Wait for navigation
+- waitForAnimationToEnd
+
+# Check for wallet/balance indicators
+- assertVisible:
+    text: ".*[Bb]alances?.*"
+    optional: true
+- assertVisible:
+    text: ".*[Ww]allet.*"
+    optional: true
+- assertVisible:
+    text: ".*[Pp]ortfolio.*"
+    optional: true

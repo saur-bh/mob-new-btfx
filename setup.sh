@@ -533,6 +533,351 @@ create_directories() {
     log_message "Directory creation completed successfully"
 }
 
+# Function to generate timestamp for device naming
+generate_timestamp() {
+    date +%Y%m%d_%H%M%S
+}
+
+# Function to create Android test device
+create_android_device() {
+    local timestamp=$(generate_timestamp)
+    local device_name="TestDevice_${timestamp}"
+    
+    print_status "Creating Android test device: $device_name"
+    log_message "Starting Android device creation: $device_name"
+    
+    # Check if Android SDK tools are available
+    if ! command_exists avdmanager; then
+        print_error "avdmanager not found. Please ensure Android SDK tools are installed."
+        log_message "Android device creation FAILED - avdmanager not found"
+        return 1
+    fi
+    
+    # Check available system images
+    local system_image="system-images;android-30;google_apis_playstore;x86_64"
+    if ! avdmanager list target | grep -q "android-30"; then
+        print_warning "Android 30 system image not found, trying Android 29"
+        system_image="system-images;android-29;google_apis_playstore;x86_64"
+        log_message "Fallback to Android 29 system image"
+    fi
+    
+    # Create AVD with error handling
+    if avdmanager create avd -n "$device_name" -k "$system_image" --force >/dev/null 2>&1; then
+        print_success "Android device created: $device_name"
+        log_message "Android device creation SUCCESS: $device_name"
+        
+        # Configure device for Google account login
+        local avd_config="$HOME/.android/avd/${device_name}.avd/config.ini"
+        if [[ -f "$avd_config" ]]; then
+            echo "PlayStore.enabled=true" >> "$avd_config"
+            echo "hw.keyboard=yes" >> "$avd_config"
+            echo "hw.mainKeys=no" >> "$avd_config"
+            log_message "Android device configured for Google Play Store access"
+        fi
+        
+        echo "$device_name"
+        return 0
+    else
+        print_error "Failed to create Android device: $device_name"
+        log_message "Android device creation FAILED: $device_name"
+        return 1
+    fi
+}
+
+# Function to create iOS test device
+create_ios_device() {
+    local os=$(get_os)
+    
+    if [[ "$os" != "macos" ]]; then
+        print_warning "iOS device creation skipped - not on macOS"
+        log_message "iOS device creation SKIPPED - not on macOS (OS: $os)"
+        return 0
+    fi
+    
+    local timestamp=$(generate_timestamp)
+    local device_name="TestDevice_${timestamp}"
+    
+    print_status "Creating iOS test device: $device_name"
+    log_message "Starting iOS device creation: $device_name"
+    
+    # Check if Xcode tools are available
+    if ! command_exists xcrun; then
+        print_error "xcrun not found. Please ensure Xcode is installed."
+        log_message "iOS device creation FAILED - xcrun not found"
+        return 1
+    fi
+    
+    # Get available device types and runtimes
+    local device_type="com.apple.CoreSimulator.SimDeviceType.iPhone-14"
+    local runtime=$(xcrun simctl list runtimes | grep "iOS" | tail -1 | awk '{print $NF}' | tr -d '()')
+    
+    if [[ -z "$runtime" ]]; then
+        print_error "No iOS runtime found"
+        log_message "iOS device creation FAILED - no iOS runtime found"
+        return 1
+    fi
+    
+    # Create iOS simulator with error handling
+    local device_id
+    if device_id=$(xcrun simctl create "$device_name" "$device_type" "$runtime" 2>/dev/null); then
+        print_success "iOS device created: $device_name (ID: $device_id)"
+        log_message "iOS device creation SUCCESS: $device_name (ID: $device_id)"
+        echo "$device_id"
+        return 0
+    else
+        print_error "Failed to create iOS device: $device_name"
+        log_message "iOS device creation FAILED: $device_name"
+        return 1
+    fi
+}
+
+# Function to boot Android device
+boot_android_device() {
+    local device_name="$1"
+    
+    if [[ -z "$device_name" ]]; then
+        print_error "No Android device name provided for booting"
+        log_message "Android device boot FAILED - no device name provided"
+        return 1
+    fi
+    
+    print_status "Booting Android device: $device_name"
+    log_message "Starting Android device boot: $device_name"
+    
+    # Start emulator in background
+    if command_exists emulator; then
+        emulator -avd "$device_name" -no-audio -no-window &
+        local emulator_pid=$!
+        log_message "Android emulator started with PID: $emulator_pid"
+        
+        # Wait for device to be ready
+        local timeout=120
+        local count=0
+        
+        print_status "Waiting for Android device to boot (timeout: ${timeout}s)..."
+        
+        while [[ $count -lt $timeout ]]; do
+            if adb devices | grep -q "emulator.*device"; then
+                print_success "Android device booted successfully: $device_name"
+                log_message "Android device boot SUCCESS: $device_name"
+                
+                # Wait a bit more for full boot
+                sleep 10
+                
+                # Setup Google account login capability
+                adb shell settings put global development_settings_enabled 1 >/dev/null 2>&1
+                adb shell settings put global stay_on_while_plugged_in 3 >/dev/null 2>&1
+                log_message "Android device configured for testing"
+                
+                return 0
+            fi
+            sleep 2
+            ((count += 2))
+        done
+        
+        print_error "Android device boot timeout: $device_name"
+        log_message "Android device boot FAILED - timeout: $device_name"
+        return 1
+    else
+        print_error "Android emulator command not found"
+        log_message "Android device boot FAILED - emulator command not found"
+        return 1
+    fi
+}
+
+# Function to boot iOS device
+boot_ios_device() {
+    local device_id="$1"
+    local os=$(get_os)
+    
+    if [[ "$os" != "macos" ]]; then
+        print_warning "iOS device boot skipped - not on macOS"
+        log_message "iOS device boot SKIPPED - not on macOS (OS: $os)"
+        return 0
+    fi
+    
+    if [[ -z "$device_id" ]]; then
+        print_error "No iOS device ID provided for booting"
+        log_message "iOS device boot FAILED - no device ID provided"
+        return 1
+    fi
+    
+    print_status "Booting iOS device: $device_id"
+    log_message "Starting iOS device boot: $device_id"
+    
+    # Boot iOS simulator
+    if xcrun simctl boot "$device_id" >/dev/null 2>&1; then
+        print_success "iOS device booted successfully: $device_id"
+        log_message "iOS device boot SUCCESS: $device_id"
+        
+        # Open Simulator app
+        open -a Simulator >/dev/null 2>&1
+        
+        # Wait for device to be fully ready
+        sleep 5
+        
+        return 0
+    else
+        print_error "Failed to boot iOS device: $device_id"
+        log_message "iOS device boot FAILED: $device_id"
+        return 1
+    fi
+}
+
+# Function to cleanup test devices
+cleanup_test_devices() {
+    print_status "Cleaning up test devices..."
+    log_message "Starting test device cleanup"
+    
+    local cleanup_errors=0
+    
+    # Cleanup Android devices
+    if command_exists avdmanager; then
+        print_status "Cleaning up Android test devices..."
+        local android_devices=$(avdmanager list avd | grep "Name: TestDevice_" | awk '{print $2}' 2>/dev/null)
+        
+        if [[ -n "$android_devices" ]]; then
+            while IFS= read -r device; do
+                if [[ -n "$device" ]]; then
+                    print_status "Deleting Android device: $device"
+                    if avdmanager delete avd -n "$device" >/dev/null 2>&1; then
+                        print_success "Deleted Android device: $device"
+                        log_message "Android device cleanup SUCCESS: $device"
+                    else
+                        print_error "Failed to delete Android device: $device"
+                        log_message "Android device cleanup FAILED: $device"
+                        ((cleanup_errors++))
+                    fi
+                fi
+            done <<< "$android_devices"
+        else
+            print_status "No Android test devices found to cleanup"
+            log_message "No Android test devices found for cleanup"
+        fi
+    else
+        log_message "Android device cleanup SKIPPED - avdmanager not found"
+    fi
+    
+    # Cleanup iOS devices
+    local os=$(get_os)
+    if [[ "$os" == "macos" ]] && command_exists xcrun; then
+        print_status "Cleaning up iOS test devices..."
+        local ios_devices=$(xcrun simctl list devices | grep "TestDevice_" | awk -F'[()]' '{print $2}' 2>/dev/null)
+        
+        if [[ -n "$ios_devices" ]]; then
+            while IFS= read -r device_id; do
+                if [[ -n "$device_id" ]]; then
+                    print_status "Deleting iOS device: $device_id"
+                    if xcrun simctl delete "$device_id" >/dev/null 2>&1; then
+                        print_success "Deleted iOS device: $device_id"
+                        log_message "iOS device cleanup SUCCESS: $device_id"
+                    else
+                        print_error "Failed to delete iOS device: $device_id"
+                        log_message "iOS device cleanup FAILED: $device_id"
+                        ((cleanup_errors++))
+                    fi
+                fi
+            done <<< "$ios_devices"
+        else
+            print_status "No iOS test devices found to cleanup"
+            log_message "No iOS test devices found for cleanup"
+        fi
+    else
+        log_message "iOS device cleanup SKIPPED - not on macOS or xcrun not found"
+    fi
+    
+    # Kill any running emulators
+    if command_exists adb; then
+        print_status "Stopping Android emulators..."
+        adb devices | grep emulator | awk '{print $1}' | while read emulator; do
+            if [[ -n "$emulator" ]]; then
+                adb -s "$emulator" emu kill >/dev/null 2>&1
+                log_message "Stopped Android emulator: $emulator"
+            fi
+        done
+    fi
+    
+    if [[ $cleanup_errors -eq 0 ]]; then
+        print_success "Device cleanup completed successfully"
+        log_message "Device cleanup completed successfully"
+        return 0
+    else
+        print_warning "Device cleanup completed with $cleanup_errors errors"
+        log_message "Device cleanup completed with $cleanup_errors errors"
+        return 1
+    fi
+}
+
+# Function to provision test devices
+provision_test_devices() {
+    print_header "Test Device Provisioning"
+    log_message "=== Starting test device provisioning ==="
+    
+    local android_device=""
+    local ios_device=""
+    local provisioning_errors=0
+    
+    # Create and boot Android device
+    if command_exists avdmanager && command_exists emulator; then
+        if android_device=$(create_android_device); then
+            if boot_android_device "$android_device"; then
+                print_success "Android test device ready: $android_device"
+                log_message "Android device provisioning SUCCESS: $android_device"
+            else
+                print_error "Failed to boot Android device: $android_device"
+                log_message "Android device provisioning FAILED - boot failed: $android_device"
+                ((provisioning_errors++))
+            fi
+        else
+            print_error "Failed to create Android device"
+            log_message "Android device provisioning FAILED - creation failed"
+            ((provisioning_errors++))
+        fi
+    else
+        print_warning "Android device provisioning skipped - tools not available"
+        log_message "Android device provisioning SKIPPED - tools not available"
+    fi
+    
+    # Create and boot iOS device
+    local os=$(get_os)
+    if [[ "$os" == "macos" ]] && command_exists xcrun; then
+        if ios_device=$(create_ios_device); then
+            if boot_ios_device "$ios_device"; then
+                print_success "iOS test device ready: $ios_device"
+                log_message "iOS device provisioning SUCCESS: $ios_device"
+            else
+                print_error "Failed to boot iOS device: $ios_device"
+                log_message "iOS device provisioning FAILED - boot failed: $ios_device"
+                ((provisioning_errors++))
+            fi
+        else
+            print_error "Failed to create iOS device"
+            log_message "iOS device provisioning FAILED - creation failed"
+            ((provisioning_errors++))
+        fi
+    else
+        print_warning "iOS device provisioning skipped - not on macOS or tools not available"
+        log_message "iOS device provisioning SKIPPED - not on macOS or tools not available"
+    fi
+    
+    echo ""
+    if [[ $provisioning_errors -eq 0 ]]; then
+        print_success "Test device provisioning completed successfully"
+        log_message "Test device provisioning completed successfully"
+        
+        # Store device info for later use
+        echo "ANDROID_TEST_DEVICE=$android_device" > .test_devices
+        echo "IOS_TEST_DEVICE=$ios_device" >> .test_devices
+        log_message "Test device info saved to .test_devices file"
+        
+        return 0
+    else
+        print_warning "Test device provisioning completed with $provisioning_errors errors"
+        log_message "Test device provisioning completed with $provisioning_errors errors"
+        return 1
+    fi
+}
+
 # Function to run connectivity test
 run_connectivity_test() {
     print_status "Testing device connectivity..."
@@ -610,6 +955,20 @@ show_next_steps() {
     echo ""
     echo "🎉 Framework setup complete!"
     echo ""
+    
+    # Check if test devices were provisioned
+    if [[ -f ".test_devices" ]]; then
+        print_success "Test Devices Provisioned:"
+        source .test_devices
+        if [[ -n "$ANDROID_TEST_DEVICE" ]]; then
+            echo "  • Android Device: $ANDROID_TEST_DEVICE"
+        fi
+        if [[ -n "$IOS_TEST_DEVICE" ]]; then
+            echo "  • iOS Device: $IOS_TEST_DEVICE"
+        fi
+        echo ""
+    fi
+    
     echo "📋 To run tests:"
     echo "   1. Source your shell profile:"
     echo "      source ~/.zshrc  # or ~/.bashrc"
@@ -623,6 +982,15 @@ show_next_steps() {
     echo "   4. Run with debug output:"
     echo "      ./utils/run_test.sh --debug"
     echo ""
+    
+    # Device cleanup instructions
+    if [[ -f ".test_devices" ]]; then
+        echo "🧹 Device Cleanup:"
+        echo "   • To clean up test devices after testing: ./setup.sh --cleanup"
+        echo "   • This will delete all TestDevice_* devices and stop emulators"
+        echo ""
+    fi
+    
     echo "📚 Documentation:"
     echo "   • Framework guide: cat Readme.md"
     echo "   • App installation: cat apps/README.md"
@@ -632,6 +1000,9 @@ show_next_steps() {
     echo "   • Check prerequisites: ./setup.sh"
     echo "   • List devices: adb devices (Android) or xcrun simctl list devices (iOS)"
     echo "   • Maestro help: maestro --help"
+    if [[ -f ".test_devices" ]]; then
+        echo "   • For device issues, try: ./setup.sh --cleanup && ./setup.sh --provision"
+    fi
     echo ""
     echo "📄 Setup Log: $LOG_FILE"
     echo ""
@@ -643,12 +1014,51 @@ show_next_steps() {
 
 # Main function
 main() {
+    # Parse command line arguments
+    local provision_devices=false
+    local cleanup_devices=false
+    
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --provision)
+                provision_devices=true
+                shift
+                ;;
+            --cleanup)
+                cleanup_devices=true
+                shift
+                ;;
+            --help)
+                echo "Usage: $0 [OPTIONS]"
+                echo "Options:"
+                echo "  --provision    Provision test devices after setup"
+                echo "  --cleanup      Clean up test devices and exit"
+                echo "  --help         Show this help message"
+                exit 0
+                ;;
+            *)
+                echo "Unknown option: $1"
+                echo "Use --help for usage information"
+                exit 1
+                ;;
+        esac
+    done
+    
     # Initialize logging
     log_message "=== Bitfinex Mobile Automation Framework Setup Started ==="
     log_message "Setup script version: $(date)"
     log_message "Working directory: $(pwd)"
     log_message "User: $(whoami)"
     log_message "OS: $(uname -a)"
+    log_message "Arguments: provision_devices=$provision_devices, cleanup_devices=$cleanup_devices"
+    
+    # Handle cleanup mode
+    if [[ "$cleanup_devices" == "true" ]]; then
+        print_header "Test Device Cleanup"
+        cleanup_test_devices
+        log_message "=== Cleanup completed ==="
+        exit 0
+    fi
     
     print_header "Bitfinex Mobile Automation Framework Setup"
     
@@ -716,6 +1126,12 @@ main() {
     # Run connectivity test
     run_connectivity_test
     echo ""
+    
+    # Provision test devices if requested or if critical tools are available
+    if [[ "$provision_devices" == "true" ]] || [[ "$all_good" == "true" && ($(command_exists avdmanager && command_exists emulator && echo "true") || $(command_exists xcrun && echo "true")) ]]; then
+        provision_test_devices
+        echo ""
+    fi
     
     # Show installation summary
     show_installation_summary

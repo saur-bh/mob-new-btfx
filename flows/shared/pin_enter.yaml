@@ -1,7 +1,7 @@
 # Shared PIN Creation Flow
 # This flow handles PIN creation by pressing the same number repeatedly
 
-appId: com.bitfinex.mobileapp.dev
+appId: com.bitfinex.bfxdev
 name: "PIN Creation"
 description: "Create PIN by pressing the same number repeatedly"
 ---

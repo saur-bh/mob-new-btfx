@@ -1,21 +1,26 @@
 # Shared PIN Creation Flow
 # This flow handles PIN creation by pressing the same number repeatedly
 
-appId: com.bitfinex.mobileapp.dev
+appId: com.bitfinex.bfxdev
 name: "PIN Creation"
 description: "Create PIN by pressing the same number repeatedly"
 ---
+# Take screenshot to see PIN creation screen
+- takeScreenshot: "pin_creation_screen.png"
+
 # Keep pressing the same number until "Create a 4-digit PIN" appears
 - repeat:
     while:
-      visible: "Create a 4-digit PIN"
+      visible:
+        text: ".*[Cc]reate.*4.*digit.*PIN.*"
     commands:
       - tapOn: ${output.app.pin.defaultPin}
 
 # Keep pressing the same number until "Confirm 4-digit PIN" appears
 - repeat:
     while:
-      visible: "Confirm 4-digit PIN"
+      visible:
+        text: ".*[Cc]onfirm.*4.*digit.*PIN.*"
     commands:
       - tapOn: ${output.app.pin.defaultPin}
 
