@@ -364,28 +364,15 @@ build_maestro_command() {
     echo "$cmd"
 }
 
-# Function to update test file for platform
-update_test_file_for_platform() {
+# Function to prepare test file (no longer needs platform-specific updates)
+prepare_test_file() {
     local test_file="$1"
-    local platform="$2"
     
-    log_message "Updating test file for platform: $test_file -> $platform"
+    log_message "Preparing test file: $test_file"
     
-    # Create a temporary copy of the test file
-    local temp_file="${test_file}.tmp"
-    cp "$test_file" "$temp_file"
-    log_message "Created temporary test file: $temp_file"
-    
-    # Update the test data file reference based on platform
-    if [[ "$platform" == "android" ]]; then
-        sed -i '' 's|testdata-ios.js|testdata-android.js|g' "$temp_file"
-        log_message "Updated test file to use Android test data"
-    else
-        sed -i '' 's|testdata-android.js||g' "$temp_file"
-        log_message "Updated test file to use iOS test data"
-    fi
-    
-    echo "$temp_file"
+    # Test files now use dynamic testdata selection via enhanced runner
+    # No temporary file modification needed
+    echo "$test_file"
 }
 
 # Parse command line arguments
@@ -515,10 +502,10 @@ if [[ -z "$DEVICE" ]]; then
     echo ""
 fi
 
-# Update test file for platform
-log_message "Updating test file for platform-specific test data"
-UPDATED_TEST_FILE=$(update_test_file_for_platform "$TEST_FILE" "$PLATFORM")
-log_and_print "INFO" "Using platform-specific test data: testdata-${PLATFORM}.js"
+# Prepare test file
+log_message "Preparing test file for execution"
+UPDATED_TEST_FILE=$(prepare_test_file "$TEST_FILE")
+log_and_print "INFO" "Using test file: $TEST_FILE"
 
 # Build and execute command
 log_message "Building Maestro command for execution"
@@ -546,9 +533,8 @@ eval "$MAESTRO_CMD"
 TEST_EXIT_CODE=$?
 log_message "Test execution completed with exit code: $TEST_EXIT_CODE"
 
-# Clean up temporary file
-log_message "Cleaning up temporary test file: $UPDATED_TEST_FILE"
-rm -f "$UPDATED_TEST_FILE"
+# No temporary files to clean up
+log_message "Test execution cleanup completed"
 
 # Log final status
 if [[ $TEST_EXIT_CODE -eq 0 ]]; then

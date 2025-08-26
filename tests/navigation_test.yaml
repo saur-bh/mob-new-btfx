@@ -1,16 +1,31 @@
+# Navigation Test Suite
+# Tests all navigation sections of the Bitfinex app
+# Supports dynamic testdata selection based on environment (staging/prod)
+
 appId: com.bitfinex.bfxdev
+name: "Navigation Test Suite"
+description: "Comprehensive navigation testing for all app sections"
+tags: ["navigation", "smoke", "regression", "ui"]
+env: ["staging", "prod"]
+scope: ["smoke", "full"]
 ---
+# Import test data (dynamically updated by enhanced test runner)
+- runScript: '../../testdata/testdata-staging.js'
+
 # Launch app with clean state
 - launchApp
+
+# Handle PIN entry if required
 - runFlow:
     when:
       visible: "Enter your 4-digit PIN"
     file: ../flows/shared/pin_enter.yaml
-# Login flow first
+
+# Handle login flow if required
 - runFlow:
     when:
       visible: "(Sign in|Tailored to you)"
-    file: "login_test.yaml"
+    file: ../flows/shared/login_flow.yaml
 
 # Test all navigation sections
 - runFlow: '../flows/shared/navigation_test.yaml'

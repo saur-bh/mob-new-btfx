@@ -55,38 +55,96 @@ bitfixnex/
 └── .gitignore                    # Version control exclusions
 ```
 
-## 🚀 **Quick Start Guide**
+## 🚀 **New Team Member Onboarding Guide**
 
-### **Step 1: Install Prerequisites**
+### **🛠️ Prerequisites & Tools**
+
+#### **Required Tools:**
+- **Java 11+** - For Android development and Maestro
+- **Node.js 16+** - For JavaScript test data and utilities
+- **Maestro** - Mobile UI testing framework (auto-installed by setup)
+- **Android SDK** - For Android testing (with ADB)
+- **Xcode** (macOS only) - For iOS testing
+- **Git** - Version control
+
+#### **Optional Tools:**
+- **Trae IDE** - Enhanced development experience with MCP integration
+- **Android Studio** - For advanced Android debugging
+- **Xcode Simulator** - For iOS testing without physical device
+
+### **📱 Step 1: Install Prerequisites**
 ```bash
-# Run the setup script to check and install prerequisites
+# Run the automated setup script
 ./setup.sh
 ```
 
-The setup script will:
-- ✅ Check Java, Node.js, Maestro installation
-- ✅ Verify Android SDK and Xcode (macOS)
-- ✅ Setup environment variables
-- ✅ Create necessary directories
-- ✅ Provide download instructions for missing components
+**What the setup script does:**
+- ✅ Checks and installs Java, Node.js, Maestro
+- ✅ Verifies Android SDK and ADB installation
+- ✅ Sets up environment variables
+- ✅ Creates necessary directories
+- ✅ Provides download links for missing components
+- ✅ Validates your development environment
 
-### **Step 2: Add Your App Files**
+### **📂 Step 2: Add Your App Files**
+
+**Where to place app files:**
 ```bash
-# Place your app files in the apps/ directory
-cp /path/to/your/app.apk apps/bitfinex-android.apk
-cp /path/to/your/app.app apps/bitfinex-ios.app
+# Android APK files go here:
+apps/bitfinex-android.apk
+
+# iOS APP files go here:
+apps/bitfinex-ios.app
+# or
+apps/BitfinexRedesign.app
 ```
 
-### **Step 3: Run Your First Test**
+**How to add files:**
 ```bash
-# Run complete test (Android - auto-manages device & app)
+# Copy your APK file
+cp /path/to/your/bitfinex.apk apps/bitfinex-android.apk
+
+# Copy your iOS app bundle
+cp -r /path/to/your/Bitfinex.app apps/bitfinex-ios.app
+
+# Verify files are in place
+ls -la apps/
+```
+
+### **🎯 Step 3: Run Your First Test**
+
+#### **Basic Testing:**
+```bash
+# Run default test (Android, staging environment, smoke tests)
 ./utils/run_test.sh
 
-# Run on iOS (requires manual app installation)
+# Run on iOS
 ./utils/run_test.sh -p ios
 
-# Run with debug output
+# Run with debug output for troubleshooting
 ./utils/run_test.sh --debug
+```
+
+#### **Enhanced Testing (Recommended):**
+```bash
+# Run smoke tests on staging environment
+./utils/run_test_enhanced.sh --env staging --scope smoke
+
+# Run full test suite on production environment
+./utils/run_test_enhanced.sh --env prod --scope full
+
+# Run with specific platform
+./utils/run_test_enhanced.sh --env staging --scope smoke --platform android
+```
+
+#### **AI-Assisted Testing:**
+```bash
+# Run tests with MCP (AI) integration
+./utils/run_mcp_test.sh staging smoke
+./utils/run_mcp_test.sh prod full
+
+# Check MCP status
+./utils/check_mcp.sh
 ```
 
 ## 🎯 **Key Features**
@@ -133,10 +191,26 @@ cp /path/to/your/app.app apps/bitfinex-ios.app
 ./utils/run_test.sh -p ios
 
 # Run specific test file
-./utils/run_test.sh -t tests/login_and_navigation_test.yaml
+./utils/run_test.sh -t tests/login_test.yaml
 
 # Run with debug output
 ./utils/run_test.sh --debug
+```
+
+### **Enhanced Testing (Dynamic Environment & Scope)**
+```bash
+# Run smoke tests on staging environment
+./utils/run_test_enhanced.sh --env staging --scope smoke
+
+# Run full tests on production environment
+./utils/run_test_enhanced.sh --env prod --scope full
+
+# Run with MCP integration
+./utils/run_mcp_test.sh staging smoke
+./utils/run_mcp_test.sh prod full
+
+# Demo script with examples
+./demo_enhanced_testing.sh
 ```
 
 ### **Advanced Options**
@@ -162,15 +236,26 @@ check-setup       # Check prerequisites
 
 ## 🔧 **Configuration**
 
-### **Platform-Specific Test Data**
-The framework uses separate configuration files for each platform:
+### **Environment-Specific Test Data**
+The framework uses separate configuration files for different environments:
 
-- **`testdata/testdata-android.js`** - Android locators, credentials, settings
-- **`testdata/testdata-ios.js`** - iOS locators, credentials, settings
+- **`testdata/testdata-staging.js`** - Staging environment (Android-specific)
+- **`testdata/testdata-prod.js`** - Production environment (iOS-specific)
+
+### **Dynamic Environment Selection**
+The enhanced test runner automatically selects the appropriate test data file based on the environment parameter:
+
+```bash
+# Uses testdata-staging.js
+./utils/run_test_enhanced.sh --env staging
+
+# Uses testdata-prod.js
+./utils/run_test_enhanced.sh --env prod
+```
 
 ### **App Configuration**
 ```javascript
-// Example from testdata-android.js
+// Example from testdata-staging.js
 output.app = {
   appId: "com.bitfinex.mobileapp.dev",
   mode: "lite",
@@ -188,7 +273,29 @@ framework:
   defaultPlatform: "android"
   defaultMode: "lite"
   defaultPinIterations: 9
-  defaultTestFile: "tests/login_and_navigation_test.yaml"
+  defaultTestFile: "tests/login_test.yaml"
+  defaultEnvironment: "staging"
+  defaultTestScope: "smoke"
+
+testScopes:
+  smoke:
+    description: "Quick smoke tests for basic functionality"
+    tags: ["smoke", "login", "critical"]
+    timeout: 300
+  full:
+    description: "Comprehensive test suite with all features"
+    tags: ["smoke", "login", "navigation", "end-to-end", "regression"]
+    timeout: 1800
+
+environments:
+  staging:
+    testDataPath: "testdata/testdata-staging.js"
+    description: "Staging environment for development testing"
+    timeout: 30000
+  prod:
+    testDataPath: "testdata/testdata-prod.js"
+    description: "Production environment for release testing"
+    timeout: 45000
 
 apps:
   android:
@@ -292,51 +399,253 @@ tail -f reports/setup_*.log   # Monitor setup logs
 tail -f reports/test_run_*.log # Monitor test run logs
 ```
 
-## 🛠️ **Development Guide**
+## 🛠️ **Development Guide for New Team Members**
 
-### **Adding New Test Flows**
-1. Create new YAML file in `flows/shared/`
-2. Add `appId: com.bitfinex.mobileapp.dev` at the top
-3. Reference in main test files using `runFlow:`
+### **📝 Creating New Tests**
 
-### **Updating Test Data**
-1. Edit platform-specific files in `testdata/`
-2. Update locators, credentials, or configuration
-3. Test with `./utils/run_test.sh --debug`
-
-### **Creating New Tests**
-```yaml
-# tests/my_new_test.yaml
-appId: com.bitfinex.mobileapp.dev
-name: "My New Test"
-tags: ["smoke", "feature-name"]
----
-# Import test data
-- runScript: '../testdata/testdata-android.js'
-
-# Use shared flows
-- runFlow: '../flows/shared/app_setup.yaml'
-
-# Your test steps
-- tapOn: "Some Element"
-- inputText: "test data"
-- assertVisible: "Expected Result"
+#### **Step 1: Create Test File**
+```bash
+# Create new test file in tests/ directory
+touch tests/my_feature_test.yaml
 ```
 
-## 🎯 **Best Practices**
+#### **Step 2: Test File Template**
+```yaml
+# tests/my_feature_test.yaml
+# Description of what this test does
+# Supports dynamic testdata selection based on environment (staging/prod)
+
+appId: com.bitfinex.bfxdev
+name: "My Feature Test"
+description: "Test description explaining what this validates"
+tags: ["smoke", "feature-name", "regression"]  # Choose appropriate tags
+env: ["staging", "prod"]                        # Supported environments
+scope: ["smoke", "full"]                        # Test scopes
+---
+# Import test data (automatically updated by enhanced runner)
+- runScript: '../../testdata/testdata-staging.js'
+
+# Use shared flows for common actions
+- runFlow: '../flows/shared/app_setup.yaml'
+- runFlow: '../flows/shared/login_flow.yaml'
+
+# Your specific test steps
+- tapOn: "Feature Button"
+- inputText: "test input"
+- assertVisible: "Expected Result"
+- assertNotVisible: "Error Message"
+```
+
+#### **Step 3: Available Tags**
+Choose appropriate tags for your test:
+- **`smoke`** - Critical functionality, runs in smoke tests
+- **`login`** - Authentication related tests
+- **`navigation`** - UI navigation tests
+- **`regression`** - Regression testing
+- **`end-to-end`** - Complete user workflows
+- **`critical`** - Must-pass tests
+- **`ui`** - User interface specific tests
+
+### **🔧 Adding New Test Flows**
+
+#### **Step 1: Create Shared Flow**
+```bash
+# Create reusable flow in flows/shared/
+touch flows/shared/my_feature_flow.yaml
+```
+
+#### **Step 2: Flow Template**
+```yaml
+# flows/shared/my_feature_flow.yaml
+appId: com.bitfinex.bfxdev
+---
+# Reusable flow for feature testing
+- tapOn: "Feature Menu"
+- waitForAnimationToEnd
+- assertVisible: "Feature Screen"
+- tapOn: "Feature Action"
+```
+
+#### **Step 3: Use in Tests**
+```yaml
+# Reference in your test files
+- runFlow: '../flows/shared/my_feature_flow.yaml'
+```
+
+### **📊 Updating Test Data**
+
+#### **Environment Files:**
+- **`testdata/testdata-staging.js`** - Staging environment data (Android-focused)
+- **`testdata/testdata-prod.js`** - Production environment data (iOS-focused)
+
+#### **How to Update:**
+```javascript
+// Example: Adding new test data
+output.newFeature = {
+  buttonText: "New Feature",
+  expectedResult: "Feature Activated",
+  testCredentials: {
+    username: "test@example.com",
+    password: "testpass123"
+  }
+}
+```
+
+#### **Test Your Changes:**
+```bash
+# Test with staging data
+./utils/run_test_enhanced.sh --env staging --scope smoke --debug
+
+# Test with production data
+./utils/run_test_enhanced.sh --env prod --scope smoke --debug
+```
+
+## 🚀 **Enhanced Testing Features**
+
+### **Dynamic Environment & Scope Selection**
+The framework now supports dynamic selection of test environments and scopes:
+
+#### **Environment Options**
+- **`staging`** - Uses `testdata-staging.js` (Android-focused)
+- **`prod`** - Uses `testdata-prod.js` (iOS-focused)
+
+#### **Test Scope Options**
+- **`smoke`** - Quick tests for basic functionality (tags: smoke, login, critical)
+- **`full`** - Comprehensive test suite (tags: smoke, login, navigation, end-to-end, regression)
+
+### **Enhanced Test Runner Usage**
+```bash
+# Basic enhanced testing
+./utils/run_test_enhanced.sh --env staging --scope smoke
+./utils/run_test_enhanced.sh --env prod --scope full
+
+# With additional parameters
+./utils/run_test_enhanced.sh --env staging --scope smoke --platform android --debug
+./utils/run_test_enhanced.sh --env prod --scope full --platform ios
+
+# MCP integration with enhanced parameters
+./utils/run_mcp_test.sh staging smoke
+./utils/run_mcp_test.sh prod full
+
+# Demo script showcasing all features
+./demo_enhanced_testing.sh
+```
+
+### **Automatic Test Data Selection**
+The enhanced runner automatically:
+- ✅ Selects appropriate test data file based on environment
+- ✅ Applies scope-specific tag filtering
+- ✅ Sets environment-specific timeouts
+- ✅ Updates test files with correct data paths
+- ✅ Provides comprehensive logging
+
+### **Enhanced Script Features**
+- **Parameter Validation** - Validates environment and scope parameters
+- **Dynamic File Updates** - Updates test files with correct testdata paths
+- **Tag-based Filtering** - Runs tests based on scope-defined tags
+- **Comprehensive Logging** - Detailed execution logs with timestamps
+- **Backward Compatibility** - Works alongside existing test runner
+
+## 🎯 **Best Practices for New Team Members**
 
 ### **✅ Do's**
-- Use `while` loops for dynamic waiting instead of fixed counts
-- Keep flows modular and reusable
-- Use platform-specific test data for different UI elements
-- Test on both iOS and Android regularly
-- Use debug mode for troubleshooting
+- **Use Enhanced Test Runner** - Always prefer `run_test_enhanced.sh` for new tests
+- **Tag Appropriately** - Use correct tags (`smoke`, `regression`, etc.) for proper filtering
+- **Environment Testing** - Test on both staging and production environments
+- **Modular Flows** - Create reusable flows in `flows/shared/` directory
+- **Dynamic Waiting** - Use `while` loops instead of fixed timeouts
+- **Debug Mode** - Use `--debug` flag when troubleshooting
+- **Version Control** - Commit test files with descriptive messages
+- **Documentation** - Add clear descriptions to your test files
 
 ### **❌ Don'ts**
-- Don't hardcode device-specific values
-- Don't use fixed timeouts for UI elements
-- Don't create monolithic test files
-- Don't ignore platform differences
+- **No Hardcoding** - Don't hardcode device-specific values or timeouts
+- **No Monolithic Tests** - Don't create single large test files
+- **No Platform Assumptions** - Don't ignore iOS/Android differences
+- **No Direct Testdata Edits** - Don't manually change testdata imports in test files
+- **No Skipping Validation** - Don't skip running tests after changes
+
+## 🚨 **Troubleshooting Guide**
+
+### **Common Issues & Solutions**
+
+#### **🔧 Setup Issues**
+```bash
+# Problem: Maestro not found
+# Solution: Run setup script
+./setup.sh
+
+# Problem: ADB not found
+# Solution: Install Android SDK or add to PATH
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+# Problem: Java version issues
+# Solution: Install Java 11+
+brew install openjdk@11
+```
+
+#### **📱 Device Issues**
+```bash
+# Problem: No Android devices found
+# Solution: Start emulator or connect device
+adb devices
+
+# Problem: App installation fails
+# Solution: Check APK file exists and is valid
+ls -la apps/
+file apps/bitfinex-android.apk
+```
+
+#### **🧪 Test Execution Issues**
+```bash
+# Problem: Test fails to find elements
+# Solution: Run with debug mode
+./utils/run_test_enhanced.sh --env staging --scope smoke --debug
+
+# Problem: Wrong testdata being used
+# Solution: Check environment parameter
+./utils/run_test_enhanced.sh --env prod --scope smoke  # Uses testdata-prod.js
+./utils/run_test_enhanced.sh --env staging --scope smoke  # Uses testdata-staging.js
+```
+
+#### **📊 Test Development Issues**
+```bash
+# Problem: Test not running in scope
+# Solution: Check tags in test file match scope configuration
+# Smoke scope runs: ["smoke", "login", "critical"]
+# Full scope runs: ["smoke", "login", "navigation", "end-to-end", "regression", "critical", "ui"]
+
+# Problem: Flow not found
+# Solution: Check file path and ensure flow exists
+ls -la flows/shared/
+```
+
+### **🔍 Debug Commands**
+```bash
+# Check framework status
+./setup.sh
+
+# Check MCP integration
+./utils/check_mcp.sh
+
+# List available devices
+adb devices                    # Android
+xcrun simctl list devices     # iOS
+
+# Check Maestro installation
+maestro --version
+maestro --help
+
+# View recent logs
+ls -la reports/
+tail -f reports/test_run_*.log
+```
+
+### **📞 Getting Help**
+- **Check Logs** - Always check `reports/` directory for detailed logs
+- **Use Debug Mode** - Add `--debug` flag to any test command
+- **Maestro Docs** - Refer to [official Maestro documentation](https://docs.maestro.dev/)
+- **Framework Demo** - Run `./demo_enhanced_testing.sh` to see examples
 
 ## 🔗 **Useful Links**
 
@@ -352,24 +661,86 @@ tags: ["smoke", "feature-name"]
 - **[Test Runner Help](./utils/run_test.sh --help)**
 - **[MCP Status Check](./utils/check_mcp.sh)**
 
+## 📋 **Quick Reference for New Team Members**
+
+### **🚀 Essential Commands**
+```bash
+# Setup and validation
+./setup.sh                                    # Install prerequisites and validate setup
+./utils/check_mcp.sh                         # Check AI integration status
+
+# Basic testing
+./utils/run_test.sh                          # Run default test (legacy)
+./utils/run_test.sh --debug                  # Run with debug output
+
+# Enhanced testing (recommended)
+./utils/run_test_enhanced.sh --env staging --scope smoke    # Quick smoke tests
+./utils/run_test_enhanced.sh --env prod --scope full        # Full test suite
+./utils/run_test_enhanced.sh --env staging --scope smoke --platform android --debug
+
+# AI-assisted testing
+./utils/run_mcp_test.sh staging smoke        # AI-enhanced smoke tests
+./utils/run_mcp_test.sh prod full            # AI-enhanced full tests
+
+# Demo and examples
+./demo_enhanced_testing.sh                   # See all features in action
+```
+
+### **📁 File Locations**
+```bash
+# App files
+apps/bitfinex-android.apk                    # Android APK file
+apps/bitfinex-ios.app                        # iOS app bundle
+
+# Test files
+tests/login_test.yaml                        # Login and navigation test
+tests/navigation_test.yaml                   # Navigation-only test
+tests/my_new_test.yaml                       # Your new test files
+
+# Test data
+testdata/testdata-staging.js                 # Staging environment data
+testdata/testdata-prod.js                    # Production environment data
+
+# Shared flows
+flows/shared/app_setup.yaml                  # App launch flow
+flows/shared/login_flow.yaml                 # Login flow
+flows/shared/navigation_test.yaml            # Navigation testing
+
+# Reports and logs
+reports/test_run_*.log                       # Test execution logs
+reports/screenshots/                         # Failure screenshots
+reports/recordings/                          # Test recordings
+```
+
+### **🎯 New Team Member Checklist**
+- [ ] Run `./setup.sh` and ensure all prerequisites are installed
+- [ ] Add your APK/APP files to the `apps/` directory
+- [ ] Run your first test: `./utils/run_test_enhanced.sh --env staging --scope smoke`
+- [ ] Create a simple test following the template in the Development Guide
+- [ ] Test on both environments: staging and production
+- [ ] Try AI-assisted testing: `./utils/run_mcp_test.sh staging smoke`
+- [ ] Review the troubleshooting guide for common issues
+- [ ] Explore the demo script: `./demo_enhanced_testing.sh`
+
 ## 🚀 **Ready to Start**
 
-Your Bitfinex automation framework is ready! 
+Your Bitfinex automation framework is ready for new team members! 
 
-**Quick Commands:**
+**First Steps:**
 ```bash
-./setup.sh                    # Check prerequisites
-./utils/run_test.sh           # Run your first test
-./utils/check_mcp.sh         # Check AI assistance status
+./setup.sh                                   # Validate your environment
+./utils/run_test_enhanced.sh --env staging --scope smoke --debug  # Run first test
+./demo_enhanced_testing.sh                   # See examples
 ```
 
 **Need Help?**
-- Check prerequisites: `./setup.sh`
-- View test runner options: `./utils/run_test.sh --help`
-- Check MCP status: `./utils/check_mcp.sh`
-- Read app installation guide: `cat apps/README.md`
+- **Setup Issues**: Run `./setup.sh` and follow the instructions
+- **Test Issues**: Use `--debug` flag and check `reports/` directory
+- **Framework Questions**: Read the troubleshooting guide above
+- **Maestro Help**: Visit [Maestro Documentation](https://docs.maestro.dev/)
+- **AI Integration**: Run `./utils/check_mcp.sh` for MCP status
 
-Happy testing! 🎯
+**Welcome to the team! Happy testing! 🎯**
 
 
 

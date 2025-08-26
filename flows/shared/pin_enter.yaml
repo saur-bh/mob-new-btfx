@@ -6,14 +6,10 @@ name: "PIN Creation"
 description: "Create PIN by pressing the same number repeatedly"
 ---
 # Import Android test data and config
-- runScript: '../../testdata/testdata-android.js'
+- runScript: '../../testdata/testdata-staging.js'
 - repeat:
     while:
       visible: "Enter your 4-digit PIN"
     commands:
       - tapOn: ${output.app.pin.defaultPin}
-
-
-      
-
 

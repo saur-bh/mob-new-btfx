@@ -10,7 +10,7 @@ description: "Launch app and select mode (Lite/Full)"
     clearState: true
     clearKeychain: true
 # Import iOS test data and config
-- runScript: '../../testdata/testdata-ios.js'
+- runScript: '../../testdata/testdata-staging.js'
 # Wait for app to load
 - extendedWaitUntil:
     visible: "Tailored to you"

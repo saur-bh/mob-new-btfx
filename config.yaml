@@ -3,10 +3,12 @@ description: "Bitfinex Mobile Automation Framework with MCP Integration"
 
 # Framework configuration
 framework:
-  defaultPlatform: "ios"
+  defaultPlatform: "android"
   defaultMode: "lite"
   defaultPinIterations: 9
-  defaultTestFile: "tests/login_and_navigation_test.yaml"
+  defaultTestFile: "tests"
+  defaultEnvironment: "staging"
+  defaultTestScope: "smoke"
 
 # App configurations
 apps:
@@ -23,8 +25,19 @@ apps:
 
 # Test data configuration
 testdata:
-  android: "testdata/testdata-android.js"
-  ios: "testdata/testdata-ios.js"
+  staging: "testdata/testdata-staging.js"
+  prod: "testdata/testdata-prod.js"
+  
+# Test scope configuration
+testScopes:
+  smoke:
+    tags: ["smoke", "login", "critical"]
+    description: "Quick smoke tests for basic functionality"
+    timeout: 300
+  full:
+    tags: ["smoke", "login", "navigation", "end-to-end", "regression", "critical", "ui"]
+    description: "Complete test suite including all test types"
+    timeout: 1800
 
 # Flow directories
 flows:
@@ -45,3 +58,14 @@ mcp:
   server: "maestro"
   timeout: 30000
   verbose: true
+  
+# Environment configuration
+environments:
+  staging:
+    name: "Staging Environment"
+    testdata: "testdata/testdata-staging.js"
+    timeout: 15000
+  prod:
+    name: "Production Environment"
+    testdata: "testdata/testdata-prod.js"
+    timeout: 20000

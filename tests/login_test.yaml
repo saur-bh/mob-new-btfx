@@ -1,13 +1,16 @@
-# Complete Login and Navigation Test - Using Android Test Data
+# Complete Login and Navigation Test
 # This test performs full login flow and then tests all navigation sections
+# Supports dynamic testdata selection based on environment (staging/prod)
 
 appId: com.bitfinex.bfxdev
 name: "Login and Navigation Test"
 description: "Complete login flow with PIN creation and navigation testing"
-tags: ["smoke", "login", "navigation", "end-to-end"]
+tags: ["smoke", "login", "navigation", "end-to-end", "regression", "critical"]
+env: ["staging", "prod"]
+scope: ["smoke", "full"]
 ---
-# Import Android test data and config
-- runScript: '../testdata/testdata-android.js'
+# Import test data (dynamically updated by enhanced test runner)
+- runScript: '../../testdata/testdata-staging.js'
 
 # Run app setup
 - runFlow: '../flows/shared/app_setup.yaml'

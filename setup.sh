@@ -369,10 +369,12 @@ check_framework_files() {
         "flows/shared/app_setup.yaml"
         "flows/shared/login_flow.yaml"
         "flows/shared/pin_creation.yaml"
-        "testdata/testdata-android.js"
-        "testdata/testdata-ios.js"
-        "tests/login_and_navigation_test.yaml"
+        "testdata/testdata-staging.js"
+        "testdata/testdata-prod.js"
+        "tests/login_test.yaml"
+        "tests/navigation_test.yaml"
         "utils/run_test.sh"
+        "utils/run_test_enhanced.sh"
         "Readme.md"
     )
     
