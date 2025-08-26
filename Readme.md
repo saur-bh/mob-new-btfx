@@ -30,17 +30,19 @@ bitfixnex/
 │   ├── navigation_pay.yaml      # Pay section navigation
 │   ├── navigation_test.yaml     # Complete navigation test
 │   └── navigation_wallets.yaml  # Wallets navigation
-├── 📁 testdata/                  # Platform-specific configurations
+├── 📁 testdata/                  # Environment-specific configurations
 │   ├── testdata-staging.js      # Staging environment data
 │   └── testdata-prod.js         # Production environment data
 ├── 📁 tests/                     # Main test suites
 │   ├── login_test.yaml          # Complete login test
 │   └── navigation_test.yaml     # Navigation validation
-├── 📁 utils/                     # Helper scripts
+├── 📁 utils/                     # Testing & utility scripts
 │   ├── check_mcp.sh             # MCP status checker
 │   ├── run_mcp_test.sh          # MCP-enhanced testing
-│   └── run_test.sh              # Test runner
+│   ├── run_test.sh              # Legacy test runner
+│   └── run_test_enhanced.sh     # Enhanced test runner (recommended)
 ├── 📁 apps/                      # App files (add your APK/APP here)
+│   └── README.md                # App installation guide
 ├── 📁 reports/                   # Test outputs (auto-generated)
 │   ├── android/                 # Android test reports
 │   ├── ios/                     # iOS test reports
@@ -52,7 +54,199 @@ bitfixnex/
 │       └── maestro-mcp-setup.mdc
 ├── config.yaml                   # Framework configuration
 ├── setup.sh                      # Main setup script
+├── demo_enhanced_testing.sh      # Interactive demo script
+├── Readme.md                     # This documentation
 └── .gitignore                    # Version control exclusions
+```
+
+## 🛠️ **Script Execution Examples**
+
+### **📋 setup.sh - Main Setup Script**
+**Purpose:** Install prerequisites, validate environment, and prepare the framework for testing.
+
+```bash
+# Basic setup
+./setup.sh
+
+# What it does:
+# ✅ Checks Java, Node.js, Maestro installation
+# ✅ Verifies Android SDK and ADB
+# ✅ Creates necessary directories (reports/, apps/)
+# ✅ Sets up environment variables
+# ✅ Provides installation guidance for missing tools
+# ✅ Validates your complete development environment
+
+# Expected output:
+# [INFO] Checking prerequisites...
+# [SUCCESS] Java 11+ found
+# [SUCCESS] Node.js 16+ found
+# [INFO] Installing Maestro...
+# [SUCCESS] Maestro installed successfully
+# [SUCCESS] Setup completed! Framework ready for testing.
+```
+
+### **🧪 run_test.sh - Legacy Test Runner**
+**Purpose:** Basic test execution with platform and debug support (maintained for backward compatibility).
+
+```bash
+# Basic usage
+./utils/run_test.sh
+
+# Platform-specific testing
+./utils/run_test.sh -p android
+./utils/run_test.sh -p ios
+
+# Custom test file
+./utils/run_test.sh -t tests/login_test.yaml
+
+# Debug mode
+./utils/run_test.sh --debug
+
+# Full parameter example
+./utils/run_test.sh -p android -t tests/navigation_test.yaml --debug
+
+# Expected output:
+# [INFO] Starting test execution...
+# [INFO] Platform: android
+# [INFO] Test file: tests/login_test.yaml
+# [INFO] Installing app on device...
+# [SUCCESS] Test completed successfully
+```
+
+### **🚀 run_test_enhanced.sh - Enhanced Test Runner (Recommended)**
+**Purpose:** Advanced test execution with dynamic environment, scope filtering, and comprehensive logging.
+
+```bash
+# Basic enhanced testing
+./utils/run_test_enhanced.sh --env staging --scope smoke
+
+# Full test suite
+./utils/run_test_enhanced.sh --env prod --scope full
+
+# Platform-specific enhanced testing
+./utils/run_test_enhanced.sh --env staging --scope smoke --platform android
+./utils/run_test_enhanced.sh --env prod --scope full --platform ios
+
+# Custom tag filtering
+./utils/run_test_enhanced.sh --env staging --tags login,navigation
+./utils/run_test_enhanced.sh --env prod --tags smoke,critical
+
+# Debug mode with enhanced logging
+./utils/run_test_enhanced.sh --env staging --scope smoke --debug
+
+# Custom device targeting
+./utils/run_test_enhanced.sh --env staging --scope smoke --device emulator-5554
+
+# Help and options
+./utils/run_test_enhanced.sh --help
+
+# Expected output:
+# [INFO] Enhanced Test Runner v2.0
+# [INFO] Environment: staging (testdata-staging.js)
+# [INFO] Scope: smoke (tags: smoke,login,critical)
+# [INFO] Platform: android
+# [INFO] Updating test files with staging environment data...
+# [SUCCESS] Test execution completed
+# [INFO] Test files restored to original state
+```
+
+### **🎯 demo_enhanced_testing.sh - Interactive Demo Script**
+**Purpose:** Interactive walkthrough of all enhanced testing features with real examples.
+
+```bash
+# Run interactive demo
+./demo_enhanced_testing.sh
+
+# What it demonstrates:
+# 🎯 Environment configurations (staging vs prod)
+# 🎯 Test scope options (smoke vs full)
+# 🎯 Platform switching (Android vs iOS)
+# 🎯 Advanced features (custom tags, debug mode)
+# 🎯 Practical examples you can copy and run
+
+# Expected output:
+# ========================================
+# 🚀 Enhanced Testing Framework Demo
+# ========================================
+# 
+# This demo will show you:
+# 1. Environment configurations
+# 2. Test scope options
+# 3. Advanced features
+# 4. Practical examples
+# 
+# Press Enter to continue...
+```
+
+### **🤖 run_mcp_test.sh - AI-Enhanced Testing**
+**Purpose:** Run tests with MCP (AI) integration for intelligent test execution and debugging.
+
+```bash
+# Basic MCP testing
+./utils/run_mcp_test.sh staging smoke
+./utils/run_mcp_test.sh prod full
+
+# Platform-specific MCP testing
+./utils/run_mcp_test.sh staging smoke android
+./utils/run_mcp_test.sh prod full ios
+
+# Expected output:
+# [INFO] Starting MCP-enhanced test execution
+# [INFO] Environment: staging, Scope: smoke, Platform: android
+# [MCP] AI analyzing test execution...
+# [MCP] Optimizing test flow based on previous runs
+# [SUCCESS] MCP-enhanced test completed
+```
+
+### **🔍 check_mcp.sh - MCP Status Checker**
+**Purpose:** Verify MCP (AI) integration status and troubleshoot connection issues.
+
+```bash
+# Check MCP status
+./utils/check_mcp.sh
+
+# Expected output (when working):
+# [INFO] Checking MCP integration status...
+# [SUCCESS] MCP server is running
+# [SUCCESS] Trae IDE connection established
+# [SUCCESS] AI-assisted testing is available
+# 
+# MCP Status: ✅ READY
+# Server: Running on port 3000
+# Connection: Active
+# Features: AI test generation, debugging, optimization
+
+# Expected output (when not working):
+# [WARNING] MCP server not found
+# [INFO] To enable AI-assisted testing:
+# [INFO] 1. Install Trae IDE
+# [INFO] 2. Run ./setup.sh
+# [INFO] 3. Follow MCP setup instructions
+```
+
+### **📊 Common Usage Patterns**
+
+```bash
+# 🚀 Quick Start Workflow
+./setup.sh                                    # 1. Setup environment
+./demo_enhanced_testing.sh                   # 2. See what's possible
+./utils/run_test_enhanced.sh --env staging --scope smoke  # 3. Run first test
+
+# 🧪 Development Workflow
+./utils/run_test_enhanced.sh --env staging --scope smoke --debug  # Test changes
+./utils/run_test_enhanced.sh --env prod --scope smoke             # Validate on prod
+./utils/run_test_enhanced.sh --env prod --scope full              # Full regression
+
+# 🤖 AI-Assisted Workflow
+./utils/check_mcp.sh                         # Check AI availability
+./utils/run_mcp_test.sh staging smoke        # AI-enhanced testing
+./utils/run_mcp_test.sh prod full            # AI-enhanced regression
+
+# 🔧 Troubleshooting Workflow
+./setup.sh                                    # Verify environment
+./utils/run_test.sh --debug                  # Basic debug
+./utils/run_test_enhanced.sh --env staging --scope smoke --debug  # Enhanced debug
+./utils/check_mcp.sh                         # Check AI integration
 ```
 
 ## 🚀 **New Team Member Onboarding Guide**
@@ -767,28 +961,89 @@ tail -f reports/test_run_*.log
 ## 📋 **Quick Reference for New Team Members**
 
 ### **🚀 Essential Commands**
+
+#### **📋 Setup & Validation**
 ```bash
-# Setup and validation
-./setup.sh                                    # Install prerequisites and validate setup
-./utils/check_mcp.sh                         # Check AI integration status
+# Initial framework setup (run this first!)
+./setup.sh
+# ✅ Installs Maestro, validates Java/Node.js, creates directories
+# ✅ Expected: "Setup completed! Framework ready for testing."
 
-# Basic testing (legacy)
-./utils/run_test.sh                          # Run default test
-./utils/run_test.sh --debug                  # Run with debug output
+# Check AI integration status
+./utils/check_mcp.sh
+# ✅ Verifies MCP server connection and AI-assisted testing availability
+# ✅ Expected: "MCP Status: ✅ READY" or setup instructions
+```
 
-# Enhanced testing (recommended) - run_test_enhanced.sh
-./utils/run_test_enhanced.sh --env staging --scope smoke    # Quick smoke tests
-./utils/run_test_enhanced.sh --env prod --scope full        # Full test suite
-./utils/run_test_enhanced.sh --env staging --scope smoke --platform android --debug
-./utils/run_test_enhanced.sh --tags login,navigation        # Custom tag filtering
-./utils/run_test_enhanced.sh --help                         # See all options
+#### **🎯 Quick Start (Recommended Path)**
+```bash
+# 1. See what's possible (interactive demo)
+./demo_enhanced_testing.sh
+# 🎮 Interactive walkthrough of all features with live examples
 
-# AI-assisted testing
+# 2. Run your first test (staging environment, smoke tests)
+./utils/run_test_enhanced.sh --env staging --scope smoke
+# 🚀 Uses testdata-staging.js, runs smoke tests only
+# ✅ Expected: Test execution with environment-specific data
+
+# 3. Get help and see all options
+./utils/run_test_enhanced.sh --help
+# 📖 Complete reference of all available parameters
+```
+
+#### **🧪 Enhanced Testing (Primary Method)**
+```bash
+# Basic enhanced testing
+./utils/run_test_enhanced.sh --env staging --scope smoke    # Quick validation
+./utils/run_test_enhanced.sh --env prod --scope full        # Complete test suite
+
+# Platform-specific testing
+./utils/run_test_enhanced.sh --env staging --scope smoke --platform android
+./utils/run_test_enhanced.sh --env prod --scope smoke --platform ios
+
+# Advanced filtering and debugging
+./utils/run_test_enhanced.sh --env staging --tags login,navigation  # Custom tags
+./utils/run_test_enhanced.sh --env staging --scope smoke --debug     # Debug mode
+./utils/run_test_enhanced.sh --env staging --exclude-tags slow       # Exclude tags
+
+# Device-specific testing
+./utils/run_test_enhanced.sh --env staging --scope smoke --device emulator-5554
+```
+
+#### **🤖 AI-Assisted Testing**
+```bash
+# AI-enhanced test execution
 ./utils/run_mcp_test.sh staging smoke        # AI-enhanced smoke tests
-./utils/run_mcp_test.sh prod full            # AI-enhanced full tests
+./utils/run_mcp_test.sh prod full            # AI-enhanced full regression
 
-# Demo and examples
-./demo_enhanced_testing.sh                   # Interactive demo of all features
+# Check AI integration
+./utils/check_mcp.sh                         # Verify MCP connection status
+```
+
+#### **🔧 Legacy Testing (Backward Compatibility)**
+```bash
+# Basic legacy runner
+./utils/run_test.sh                          # Default Android test
+./utils/run_test.sh --debug                  # With debug output
+./utils/run_test.sh -p ios                   # iOS platform
+./utils/run_test.sh -t tests/login_test.yaml # Specific test file
+```
+
+#### **📊 Common Workflows**
+```bash
+# 🚀 New Developer Workflow
+./setup.sh → ./demo_enhanced_testing.sh → ./utils/run_test_enhanced.sh --env staging --scope smoke
+
+# 🧪 Development Testing Workflow
+./utils/run_test_enhanced.sh --env staging --scope smoke --debug  # Test changes
+./utils/run_test_enhanced.sh --env prod --scope smoke             # Validate
+
+# 🔄 CI/CD Workflow
+./utils/run_test_enhanced.sh --env staging --scope smoke          # Pre-merge
+./utils/run_test_enhanced.sh --env prod --scope full              # Post-merge
+
+# 🤖 AI-Assisted Workflow
+./utils/check_mcp.sh → ./utils/run_mcp_test.sh staging smoke → ./utils/run_mcp_test.sh prod full
 ```
 
 ### **📁 File Locations**
@@ -817,29 +1072,159 @@ reports/screenshots/                         # Failure screenshots
 reports/recordings/                          # Test recordings
 ```
 
-### **🎯 New Team Member Checklist**
-- [ ] Run `./setup.sh` and ensure all prerequisites are installed
-- [ ] Add your APK/APP files to the `apps/` directory
-- [ ] Run your first test: `./utils/run_test_enhanced.sh --env staging --scope smoke`
-- [ ] Create a simple test following the template in the Development Guide
-- [ ] Test on both environments: staging and production
-- [ ] Try AI-assisted testing: `./utils/run_mcp_test.sh staging smoke`
-- [ ] Review the troubleshooting guide for common issues
-- [ ] Explore the enhanced testing demo: `./demo_enhanced_testing.sh`
-- [ ] Try enhanced test runner: `./utils/run_test_enhanced.sh --env staging --scope smoke`
-- [ ] Learn about all enhanced options: `./utils/run_test_enhanced.sh --help`
+### **📋 New Team Member Checklist**
+
+#### **✅ Setup Phase (5-10 minutes)**
+- [ ] Clone repository and navigate to project directory
+- [ ] Run `./setup.sh` to install prerequisites and validate environment
+  ```bash
+  ./setup.sh
+  # Expected: "Setup completed! Framework ready for testing."
+  ```
+- [ ] Verify setup by checking `reports/setup_*.log` for any issues
+- [ ] Add your APK/APP file to `apps/` directory (see `apps/README.md`)
+- [ ] Run `./utils/check_mcp.sh` to verify AI integration status
+  ```bash
+  ./utils/check_mcp.sh
+  # Expected: "MCP Status: ✅ READY" or setup instructions
+  ```
+
+#### **✅ Learning Phase (10-15 minutes)**
+- [ ] Read this README.md completely (especially Key Features and Essential Commands)
+- [ ] **Start with the interactive demo** to see all capabilities:
+  ```bash
+  ./demo_enhanced_testing.sh
+  # 🎮 Interactive walkthrough with live examples
+  ```
+- [ ] **Try your first enhanced test** (recommended starting point):
+  ```bash
+  ./utils/run_test_enhanced.sh --env staging --scope smoke
+  # 🚀 Quick smoke tests with staging environment
+  ```
+- [ ] **Learn about all enhanced options**:
+  ```bash
+  ./utils/run_test_enhanced.sh --help
+  # 📖 Complete parameter reference
+  ```
+- [ ] Examine test files in `tests/` directory
+- [ ] Review shared flows in `flows/shared/` directory
+- [ ] Check testdata files: `testdata/testdata-staging.js` and `testdata/testdata-prod.js`
+
+#### **✅ Practice Phase (15-20 minutes)**
+- [ ] **Run basic legacy test** (for comparison):
+  ```bash
+  ./utils/run_test.sh --debug
+  # 🔧 Legacy runner with debug output
+  ```
+- [ ] **Run enhanced smoke tests** with debug:
+  ```bash
+  ./utils/run_test_enhanced.sh --env staging --scope smoke --debug
+  # 🧪 Enhanced runner with comprehensive logging
+  ```
+- [ ] **Run full test suite** on production environment:
+  ```bash
+  ./utils/run_test_enhanced.sh --env prod --scope full
+  # 🚀 Complete regression testing
+  ```
+- [ ] **Try AI-assisted testing** (if MCP available):
+  ```bash
+  ./utils/run_mcp_test.sh staging smoke
+  # 🤖 AI-enhanced test execution
+  ```
+- [ ] Create a simple test file following the template in Development Guide
+- [ ] Run your test and check the generated reports in `reports/` directory
+
+#### **✅ Mastery Phase (10-15 minutes)**
+- [ ] **Understand environment differences**:
+  ```bash
+  # Staging environment (testdata-staging.js)
+  ./utils/run_test_enhanced.sh --env staging --scope smoke
+  
+  # Production environment (testdata-prod.js)
+  ./utils/run_test_enhanced.sh --env prod --scope smoke
+  ```
+- [ ] **Practice advanced tag filtering**:
+  ```bash
+  # Include specific tags
+  ./utils/run_test_enhanced.sh --env staging --tags login,navigation
+  
+  # Exclude slow tests
+  ./utils/run_test_enhanced.sh --env staging --scope full --exclude-tags slow
+  ```
+- [ ] **Learn platform-specific testing**:
+  ```bash
+  # Android testing
+  ./utils/run_test_enhanced.sh --env staging --scope smoke --platform android
+  
+  # iOS testing
+  ./utils/run_test_enhanced.sh --env staging --scope smoke --platform ios
+  ```
+- [ ] **Master debugging techniques** using `--debug` flag and log files
+- [ ] **Explore MCP integration** features (if available)
+- [ ] Review troubleshooting guide and common issues
+- [ ] **Set up your development workflow**:
+  ```bash
+  # Recommended development cycle
+  ./utils/run_test_enhanced.sh --env staging --scope smoke --debug  # Test changes
+  ./utils/run_test_enhanced.sh --env prod --scope smoke             # Validate
+  ./utils/run_test_enhanced.sh --env prod --scope full              # Full regression
+  ```
+
+**🎯 Total Time: ~45-60 minutes to become productive**
+**🚀 Quick Start: `./setup.sh` → `./demo_enhanced_testing.sh` → `./utils/run_test_enhanced.sh --env staging --scope smoke`**
 
 ## 🚀 **Ready to Start**
 
-Your Bitfinex automation framework is ready for new team members! 
-
-**First Steps:**
+### **🎯 3-Step Quick Start (5 minutes)**
 ```bash
-./setup.sh                                   # Validate your environment
-./demo_enhanced_testing.sh                   # See interactive demo of all features
-./utils/run_test_enhanced.sh --env staging --scope smoke --debug  # Run first enhanced test
-./utils/run_test_enhanced.sh --help          # Learn all available options
+# Step 1: Setup your environment
+./setup.sh
+# ✅ Expected: "Setup completed! Framework ready for testing."
+
+# Step 2: See what's possible (interactive demo)
+./demo_enhanced_testing.sh
+# 🎮 Interactive walkthrough showing all features and examples
+
+# Step 3: Run your first test
+./utils/run_test_enhanced.sh --env staging --scope smoke
+# 🚀 Quick smoke tests using staging environment data
 ```
+
+### **📚 Next Steps (Explore & Learn)**
+```bash
+# Get complete help and options reference
+./utils/run_test_enhanced.sh --help
+# 📖 See all available parameters and usage examples
+
+# Try different environments and test scopes
+./utils/run_test_enhanced.sh --env prod --scope full
+# 🧪 Full regression testing with production environment
+
+# Check AI integration (if available)
+./utils/check_mcp.sh
+# 🤖 Verify AI-assisted testing capabilities
+
+# Try AI-enhanced testing
+./utils/run_mcp_test.sh staging smoke
+# 🚀 AI-powered test execution and optimization
+```
+
+### **🔄 Development Workflow**
+```bash
+# Daily development cycle
+./utils/run_test_enhanced.sh --env staging --scope smoke --debug  # 1. Test changes
+./utils/run_test_enhanced.sh --env prod --scope smoke             # 2. Validate
+./utils/run_test_enhanced.sh --env prod --scope full              # 3. Full regression
+```
+
+**🎯 You're now ready to test like a pro! 🚀**
+
+**💡 Pro Tips:**
+- Start with `./demo_enhanced_testing.sh` to understand all capabilities
+- Use `--env staging --scope smoke` for quick validation during development
+- Use `--env prod --scope full` for comprehensive testing before releases
+- Enable `--debug` flag when troubleshooting issues
+- Check `reports/` directory for detailed logs and test results
 
 **Need Help?**
 - **Setup Issues**: Run `./setup.sh` and follow the instructions
