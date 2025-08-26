@@ -28,11 +28,24 @@ output.bitfinex = {
 output.app = {
     appId: config.appId,
     
-    // App modes
+    // App modes (can be overridden by environment variable APP_MODE)
     modes: {
-        lite: "Lite",
-        full: "Full"
+        lite: {
+            name: "Lite",
+            selector: "Lite.*",
+            timeout: 10000,
+            features: ["basic_trading", "wallet_view", "simple_navigation"]
+        },
+        full: {
+            name: "Full", 
+            selector: "Full.*",
+            timeout: 15000,
+            features: ["advanced_trading", "full_wallet", "complete_navigation", "analytics", "advanced_orders"]
+        }
     },
+    
+    // Get current mode (from environment variable or default to lite)
+    currentMode: process.env.APP_MODE || "lite",
     
     // Navigation elements
     navigation: {

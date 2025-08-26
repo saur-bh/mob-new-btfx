@@ -17,7 +17,10 @@ description: "Launch app and select mode (Lite/Full)"
     timeout: 10000
 
 # Select app mode (Lite or Full)
-- tapOn: "Lite.*"  # Def- tapOn: "Lite ault to Lite mode
+- tapOn:
+    text: "${output.app.modes[output.app.currentMode].selector}"
+    optional: true
+    timeoutMs: "${output.app.modes[output.app.currentMode].timeout}"
 
 # Continue to next screen
 - tapOn: "Continue"

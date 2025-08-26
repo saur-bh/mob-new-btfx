@@ -10,6 +10,21 @@ framework:
   defaultEnvironment: "staging"
   defaultTestScope: "smoke"
 
+# App mode configuration
+modes:
+  lite:
+    name: "Lite"
+    description: "Lite mode with basic features"
+    selector: "Lite.*"
+    timeout: 10000
+    features: ["basic_trading", "wallet_view", "simple_navigation"]
+  full:
+    name: "Full"
+    description: "Full mode with all features"
+    selector: "Full.*"
+    timeout: 15000
+    features: ["advanced_trading", "full_wallet", "complete_navigation", "analytics", "advanced_orders"]
+
 # App configurations
 apps:
   android:
