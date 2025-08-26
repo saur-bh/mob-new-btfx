@@ -198,6 +198,19 @@ ls -la apps/
 ```
 
 ### **Enhanced Testing (Dynamic Environment & Scope)**
+
+#### **🚀 Enhanced Test Runner (`run_test_enhanced.sh`)**
+The enhanced test runner provides dynamic environment and scope support with comprehensive logging and automatic test data management.
+
+**Key Features:**
+- ✅ **Dynamic Environment Selection** - Automatically uses correct testdata files
+- ✅ **Scope-Based Tag Filtering** - Runs appropriate test sets based on scope
+- ✅ **Comprehensive Logging** - Detailed execution logs with timestamps
+- ✅ **Automatic File Management** - Updates and restores test files automatically
+- ✅ **Parameter Validation** - Validates all input parameters
+- ✅ **Backup & Restore** - Safely modifies test files with automatic restoration
+
+**Basic Usage:**
 ```bash
 # Run smoke tests on staging environment
 ./utils/run_test_enhanced.sh --env staging --scope smoke
@@ -205,12 +218,100 @@ ls -la apps/
 # Run full tests on production environment
 ./utils/run_test_enhanced.sh --env prod --scope full
 
+# Run with specific platform
+./utils/run_test_enhanced.sh --env staging --scope smoke --platform android
+
+# Run with debug output
+./utils/run_test_enhanced.sh --env staging --scope smoke --debug
+```
+
+**Advanced Usage:**
+```bash
+# Custom tag filtering
+./utils/run_test_enhanced.sh --env staging --tags login,navigation
+
+# Exclude specific tags
+./utils/run_test_enhanced.sh --env staging --scope full --exclude-tags slow
+
+# Specific device targeting
+./utils/run_test_enhanced.sh --env staging --scope smoke --device emulator-5554
+
+# Custom app path
+./utils/run_test_enhanced.sh --env staging --scope smoke --app-path apps/custom-app.apk
+```
+
+**All Available Options:**
+```bash
+./utils/run_test_enhanced.sh [OPTIONS]
+
+Options:
+  -t, --test-file FILE     Test file to run (default: tests)
+  -p, --platform PLATFORM  Platform: ios or android (default: android)
+  -m, --mode MODE          App mode: lite or full (default: lite)
+  -i, --pin-iterations N   Number of PIN iterations (default: 9)
+  -d, --device DEVICE      Device ID to run on
+  -e, --env ENV            Environment: staging, prod (default: staging)
+  -s, --scope SCOPE        Test scope: smoke, full (default: smoke)
+  -a, --app-path PATH      Path to app file
+  --tags TAGS              Comma-separated tags to include
+  --exclude-tags TAGS      Comma-separated tags to exclude
+  --debug                  Enable debug output
+  --help                   Show help message
+```
+
+#### **🎯 Demo Script (`demo_enhanced_testing.sh`)**
+Interactive demonstration script that showcases all enhanced testing capabilities with step-by-step examples.
+
+```bash
+# Run the interactive demo
+./demo_enhanced_testing.sh
+```
+
+**Demo Features:**
+- 🎮 **Interactive Walkthrough** - Step-by-step demonstration with user prompts
+- 🌍 **Environment Overview** - Shows staging vs production configurations
+- 🎯 **Scope Explanation** - Demonstrates smoke vs full test scopes
+- 📋 **Live Examples** - Real command examples you can copy and use
+- 🚀 **Feature Showcase** - Demonstrates all enhanced runner capabilities
+
+**What the demo covers:**
+1. **Environment Configurations:**
+   - `staging` - Uses `testdata-staging.js` for test data
+   - `prod` - Uses `testdata-prod.js` for production-like data
+
+2. **Test Scope Options:**
+   - `smoke` - Quick validation tests (tags: smoke)
+   - `full` - Complete test suite (tags: smoke, regression, end-to-end)
+
+3. **Advanced Features:**
+   - Custom tag filtering (`--tags login,navigation`)
+   - Tag exclusion (`--exclude-tags slow`)
+   - MCP integration examples
+   - Debug mode demonstrations
+
+4. **Practical Examples:**
+   ```bash
+   # Examples shown in demo
+   ./utils/run_test_enhanced.sh -e staging -s smoke
+   ./utils/run_test_enhanced.sh -e prod -s full
+   ./utils/run_test_enhanced.sh -e staging --tags login,pin
+   ./utils/run_mcp_test.sh staging smoke
+   ```
+
+**Demo Output:**
+- 📊 **Configuration Tables** - Clear overview of available options
+- 💡 **Usage Tips** - Best practices and recommendations
+- 🔗 **Command Examples** - Ready-to-use commands for different scenarios
+- ✅ **Success Indicators** - Shows what each command accomplishes
+
+#### **🤖 AI-Assisted Testing**
+```bash
 # Run with MCP integration
 ./utils/run_mcp_test.sh staging smoke
 ./utils/run_mcp_test.sh prod full
 
-# Demo script with examples
-./demo_enhanced_testing.sh
+# Check MCP status
+./utils/check_mcp.sh
 ```
 
 ### **Advanced Options**
@@ -658,7 +759,9 @@ tail -f reports/test_run_*.log
 
 ### **Framework Resources**
 - **[App Installation Guide](apps/README.md)**
-- **[Test Runner Help](./utils/run_test.sh --help)**
+- **[Basic Test Runner Help](./utils/run_test.sh --help)**
+- **[Enhanced Test Runner Help](./utils/run_test_enhanced.sh --help)**
+- **[Interactive Demo](./demo_enhanced_testing.sh)**
 - **[MCP Status Check](./utils/check_mcp.sh)**
 
 ## 📋 **Quick Reference for New Team Members**
@@ -669,21 +772,23 @@ tail -f reports/test_run_*.log
 ./setup.sh                                    # Install prerequisites and validate setup
 ./utils/check_mcp.sh                         # Check AI integration status
 
-# Basic testing
-./utils/run_test.sh                          # Run default test (legacy)
+# Basic testing (legacy)
+./utils/run_test.sh                          # Run default test
 ./utils/run_test.sh --debug                  # Run with debug output
 
-# Enhanced testing (recommended)
+# Enhanced testing (recommended) - run_test_enhanced.sh
 ./utils/run_test_enhanced.sh --env staging --scope smoke    # Quick smoke tests
 ./utils/run_test_enhanced.sh --env prod --scope full        # Full test suite
 ./utils/run_test_enhanced.sh --env staging --scope smoke --platform android --debug
+./utils/run_test_enhanced.sh --tags login,navigation        # Custom tag filtering
+./utils/run_test_enhanced.sh --help                         # See all options
 
 # AI-assisted testing
 ./utils/run_mcp_test.sh staging smoke        # AI-enhanced smoke tests
 ./utils/run_mcp_test.sh prod full            # AI-enhanced full tests
 
 # Demo and examples
-./demo_enhanced_testing.sh                   # See all features in action
+./demo_enhanced_testing.sh                   # Interactive demo of all features
 ```
 
 ### **📁 File Locations**
@@ -720,7 +825,9 @@ reports/recordings/                          # Test recordings
 - [ ] Test on both environments: staging and production
 - [ ] Try AI-assisted testing: `./utils/run_mcp_test.sh staging smoke`
 - [ ] Review the troubleshooting guide for common issues
-- [ ] Explore the demo script: `./demo_enhanced_testing.sh`
+- [ ] Explore the enhanced testing demo: `./demo_enhanced_testing.sh`
+- [ ] Try enhanced test runner: `./utils/run_test_enhanced.sh --env staging --scope smoke`
+- [ ] Learn about all enhanced options: `./utils/run_test_enhanced.sh --help`
 
 ## 🚀 **Ready to Start**
 
@@ -729,8 +836,9 @@ Your Bitfinex automation framework is ready for new team members!
 **First Steps:**
 ```bash
 ./setup.sh                                   # Validate your environment
-./utils/run_test_enhanced.sh --env staging --scope smoke --debug  # Run first test
-./demo_enhanced_testing.sh                   # See examples
+./demo_enhanced_testing.sh                   # See interactive demo of all features
+./utils/run_test_enhanced.sh --env staging --scope smoke --debug  # Run first enhanced test
+./utils/run_test_enhanced.sh --help          # Learn all available options
 ```
 
 **Need Help?**
